@@ -82,3 +82,7 @@ ChatMessages:
 This plugin **does not hide all error messages** from the server console and logs! 
 
 This plugin hides **only the messages/errors you add to the config file!**
+
+#### bStats
+
+[![bStats](https://bstats.org/signatures/bukkit/ConsoleSpamFixReborn.svg)](https://bstats.org/plugin/bukkit/ConsoleSpamFixReborn/24348)
