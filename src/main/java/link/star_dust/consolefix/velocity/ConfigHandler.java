@@ -1,60 +1,106 @@
 package link.star_dust.consolefix.velocity;
 
-import java.io.File;
+import com.velocitypowered.api.plugin.PluginContainer;
+import com.velocitypowered.api.plugin.annotation.DataDirectory;
+import org.spongepowered.configurate.CommentedConfigurationNode;
+import org.spongepowered.configurate.ConfigurateException;
+import org.spongepowered.configurate.loader.ConfigurationLoader;
+import org.spongepowered.configurate.serialize.SerializationException;
+import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
+
+import java.io.*;
+import java.nio.file.Path;
 import java.util.List;
+import org.slf4j.Logger;
 
 public class ConfigHandler {
-    private VelocityCSF csf;
+    private final Logger logger;
+    private final Path dataDirectory;
+    private final PluginContainer pluginContainer;
+    private CommentedConfigurationNode configNode;
+    private ConfigurationLoader<CommentedConfigurationNode> loader;
 
-    public ConfigHandler(VelocityCSF csf) {
-        this.csf = csf;
+    public ConfigHandler(VelocityCSF velocityCSF) {
+        this.logger = velocityCSF.getLogger();
+        this.dataDirectory = velocityCSF.getDataDirectory();
+        this.pluginContainer = velocityCSF.getPluginContainer();
         this.loadConfig();
     }
 
     public boolean loadConfig() {
-        File configFile;
-        File pluginFolder = new File("plugins" + System.getProperty("file.separator") + CSF.pluginName);
+        // Ensure the plugin's data directory exists
+        File pluginFolder = dataDirectory.toFile();
         if (!pluginFolder.exists()) {
-            pluginFolder.mkdir();
+            pluginFolder.mkdirs();
         }
-        if (!(configFile = new File("plugins" + System.getProperty("file.separator") + CSF.pluginName + System.getProperty("file.separator") + "config.yml")).exists()) {
-        	VelocityCSF.log.info("No config file found! Creating new one...");
-            this.csf.saveDefaultConfig();
+
+        // Define the config file path
+        File configFile = new File(dataDirectory.toFile(), "config.yml");
+
+        // Initialize the YAML loader
+        loader = YamlConfigurationLoader.builder()
+                .path(configFile.toPath())
+                .build();
+
+        if (!configFile.exists()) {
+            logger.info("No config file found! Copying default config from JAR...");
+            copyDefaultConfigFromJar(configFile);
         }
+
         try {
-        	VelocityCSF.log.info("Loading the config file...");
-            this.csf.getConfig().load(configFile);
-            CSF.log.info("Config file loaded!");
+            logger.info("Loading the config file...");
+            configNode = loader.load();
+            logger.info("Config file loaded successfully!");
             return true;
-        }
-        catch (Exception e) {
-        	VelocityCSF.log.info("Could not load config file! You need to regenerate the config! Error: " + e.getMessage());
+        } catch (ConfigurateException e) {
+            logger.error("Could not load config file! Error: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
     }
 
-    public List<String> getStringList(String key) {
-        if (!this.csf.getConfig().contains(key)) {
-            this.csf.getLogger().severe("Could not locate '" + key + "' in the config.yml inside of the " + CSF.pluginName + " folder! (Try generating a new one by deleting the current)");
-            return null;
+    private void copyDefaultConfigFromJar(File configFile) {
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("config.yml")) {
+            if (inputStream == null) {
+                logger.error("Default config file 'config.yml' is missing from the JAR!");
+                return;
+            }
+
+            // Copy the default config file to the plugin's data directory
+            try (OutputStream outputStream = new FileOutputStream(configFile)) {
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = inputStream.read(buffer)) > 0) {
+                    outputStream.write(buffer, 0, length);
+                }
+            }
+
+            logger.info("Default config file has been copied successfully.");
+        } catch (IOException e) {
+            logger.error("Failed to copy default config file! Error: " + e.getMessage());
+            e.printStackTrace();
         }
-        return this.csf.getConfig().getStringList(key);
+    }
+
+    public List<String> getStringList(String key) throws SerializationException {
+        if (configNode.node(key).virtual()) {
+            throw new RuntimeException("Missing required key in config.yml: " + key);
+        }
+        return configNode.node(key).getList(String.class);
     }
 
     public String getString(String key) {
-        if (!this.csf.getConfig().contains(key)) {
-            this.csf.getLogger().severe("Could not locate " + key + " in the config.yml inside of the " + CSF.pluginName + " folder! (Try generating a new one by deleting the current)");
-            return "errorCouldNotLocateInConfigYml:" + key;
+        if (configNode.node(key).virtual()) {
+            throw new RuntimeException("Missing required key in config.yml: " + key);
         }
-        return this.csf.getConfig().getString(key);
+        return configNode.node(key).getString();
     }
 
-    public String getStringWithColor(String key) {
-        if (!this.csf.getConfig().contains(key)) {
-            this.csf.getLogger().severe("Could not locate " + key + " in the config.yml inside of the " + CSF.pluginName + " folder! (Try generating a new one by deleting the current)");
-            return "errorCouldNotLocateInConfigYml:" + key;
+    public String getChatMessage(String key) {
+        String message = getString("ChatMessages." + key);
+        if (message == null) {
+            throw new RuntimeException("Missing required chat message in config.yml: ChatMessages." + key);
         }
-        return this.csf.getConfig().getString(key).replaceAll("&", "§");
+        return message.replaceAll("&", "§"); // Replace & with § for color codes
     }
 }
