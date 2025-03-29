@@ -1,12 +1,12 @@
-package link.star_dust.consolefix;
+package link.star_dust.consolefix.velocity;
 
 import java.io.File;
 import java.util.List;
 
 public class ConfigHandler {
-    private CSF csf;
+    private VelocityCSF csf;
 
-    public ConfigHandler(CSF csf) {
+    public ConfigHandler(VelocityCSF csf) {
         this.csf = csf;
         this.loadConfig();
     }
@@ -18,17 +18,17 @@ public class ConfigHandler {
             pluginFolder.mkdir();
         }
         if (!(configFile = new File("plugins" + System.getProperty("file.separator") + CSF.pluginName + System.getProperty("file.separator") + "config.yml")).exists()) {
-            CSF.log.info("No config file found! Creating new one...");
+        	VelocityCSF.log.info("No config file found! Creating new one...");
             this.csf.saveDefaultConfig();
         }
         try {
-            CSF.log.info("Loading the config file...");
+        	VelocityCSF.log.info("Loading the config file...");
             this.csf.getConfig().load(configFile);
             CSF.log.info("Config file loaded!");
             return true;
         }
         catch (Exception e) {
-            CSF.log.info("Could not load config file! You need to regenerate the config! Error: " + e.getMessage());
+        	VelocityCSF.log.info("Could not load config file! You need to regenerate the config! Error: " + e.getMessage());
             e.printStackTrace();
             return false;
         }

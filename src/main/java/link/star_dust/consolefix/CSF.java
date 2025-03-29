@@ -105,7 +105,7 @@ public final class CSF extends JavaPlugin {
             this.is13Server = true;
             this.is19Server = true;
             this.oldEngine = false;
-        } else if (version.matches("1.21") || version.matches("1.21.1") || version.matches("1.21.2") || version.matches("1.21.3") || version.matches("1.21.4")) {
+        } else if (version.matches("1.21") || version.matches("1.21.1") || version.matches("1.21.2") || version.matches("1.21.3") || version.matches("1.21.4") || version.matches("1.21.5")) {
             this.is13Server = true;
             this.is19Server = true;
             this.oldEngine = false;
