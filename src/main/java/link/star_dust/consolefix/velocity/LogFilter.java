@@ -6,6 +6,7 @@ import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.message.Message;
+import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.util.List;
 
@@ -13,20 +14,16 @@ public class LogFilter implements Filter {
     private final VelocityCSF plugin;
     private List<String> messagesToHide;
 
-    public LogFilter(VelocityCSF plugin) {
+    public LogFilter(VelocityCSF plugin) throws SerializationException {
         this.plugin = plugin;
-        refreshMessagesToHide(); // 初始化时加载过滤列表
+        refreshMessagesToHide(plugin.getConfigHandler().getStringList("Messages-To-Hide-Filter"));
     }
 
     /**
      * 刷新需要隐藏的消息列表
      */
-    public void refreshMessagesToHide() {
-        try {
-            this.messagesToHide = plugin.getConfigHandler().getStringList("Messages-To-Hide-Filter");
-        } catch (Exception e) {
-            plugin.getLogger().error("Failed to reload messages to hide from config", e);
-        }
+    public void refreshMessagesToHide(List<String> newMessagesToHide) {
+        this.messagesToHide = newMessagesToHide;
     }
 
     @Override

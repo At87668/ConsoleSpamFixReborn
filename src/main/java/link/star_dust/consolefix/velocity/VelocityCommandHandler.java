@@ -7,8 +7,10 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 
 public class VelocityCommandHandler implements SimpleCommand {
     private final ConfigHandler configHandler;
+    private final VelocityCSF velocityCSF;
 
-    public VelocityCommandHandler(ConfigHandler configHandler, EngineInterface engine) {
+    public VelocityCommandHandler(ConfigHandler configHandler, EngineInterface enginem, VelocityCSF velocityCSF) {
+    	this.velocityCSF = velocityCSF;
         this.configHandler = configHandler;
     }
 
@@ -27,6 +29,7 @@ public class VelocityCommandHandler implements SimpleCommand {
         if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
             // Reload the configuration
             boolean success = configHandler.loadConfig();
+            velocityCSF.updateLogFilter();
             if (success) {
             	source.sendMessage(MiniMessage.miniMessage().deserialize("<green>Reload successful!</green>"));
             } else {

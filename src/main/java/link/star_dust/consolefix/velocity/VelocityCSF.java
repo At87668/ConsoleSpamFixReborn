@@ -6,10 +6,16 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
+import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.nio.file.Path;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -19,6 +25,10 @@ public class VelocityCSF {
     private final ProxyServer server;
     private final Path dataDirectory;
     private final PluginContainer pluginContainer;
+    private LogFilter logFilter;
+    private final LoggerContext loggerContext;
+    private final Configuration config;
+    private final LogFilterManager logFilterManager;
 
     private ConfigHandler configHandler;
     private EngineInterface engine;
@@ -32,6 +42,18 @@ public class VelocityCSF {
         this.dataDirectory = dataDirectory;
         this.pluginContainer = pluginContainer;
         this.metricsFactory = metricsFactory;
+        this.loggerContext = (LoggerContext) LogManager.getContext(false);
+        this.config = loggerContext.getConfiguration();
+        this.logFilterManager = new LogFilterManager(this);
+    }
+    
+    public void updateLogFilter() {
+        if (this.engine == null || this.configHandler == null) {
+            logger.error("Cannot update log filter: Engine or ConfigHandler is not initialized yet!");
+            return;
+        }
+
+        this.engine.hideConsoleMessages();
     }
 
     @Subscribe
@@ -47,11 +69,13 @@ public class VelocityCSF {
         this.engine.hideConsoleMessages();
         
         ProxyServer proxyServer = this.server;
-        proxyServer.getCommandManager().register("csfv", new VelocityCommandHandler(this.configHandler, this.engine));
+        proxyServer.getCommandManager().register("csfv", new VelocityCommandHandler(this.configHandler, this.engine, null));
 
         // Initialize bStats metrics
         int pluginId = 25291; // Replace with your actual plugin ID
         metricsFactory.make(this, pluginId);
+        
+        updateLogFilter();
 
         // Log successful initialization
         logger.info("{} v{} loaded successfully!", PLUGIN_NAME, pluginContainer.getDescription().getVersion().orElse("Unknown"));

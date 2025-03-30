@@ -19,27 +19,20 @@ public class ConfigHandler {
     private final PluginContainer pluginContainer;
     private CommentedConfigurationNode configNode;
     private ConfigurationLoader<CommentedConfigurationNode> loader;
-	private VelocityCSF VelocityCSF;
 
     public ConfigHandler(VelocityCSF velocityCSF) {
-    	this.VelocityCSF = velocityCSF;
         this.logger = velocityCSF.getLogger();
         this.dataDirectory = velocityCSF.getDataDirectory();
         this.pluginContainer = velocityCSF.getPluginContainer();
-        this.loadConfig();
     }
 
     public boolean loadConfig() {
-        // Ensure the plugin's data directory exists
         File pluginFolder = dataDirectory.toFile();
         if (!pluginFolder.exists()) {
             pluginFolder.mkdirs();
         }
 
-        // Define the config file path
         File configFile = new File(dataDirectory.toFile(), "config.yml");
-
-        // Initialize the YAML loader
         loader = YamlConfigurationLoader.builder()
                 .path(configFile.toPath())
                 .build();
@@ -52,8 +45,6 @@ public class ConfigHandler {
         try {
             logger.info("Loading the config file...");
             configNode = loader.load();
-            LogFilter logFilter = new LogFilter(VelocityCSF);
-			logFilter.refreshMessagesToHide();
             logger.info("Config file loaded successfully!");
             return true;
         } catch (ConfigurateException e) {
@@ -70,7 +61,6 @@ public class ConfigHandler {
                 return;
             }
 
-            // Copy the default config file to the plugin's data directory
             try (OutputStream outputStream = new FileOutputStream(configFile)) {
                 byte[] buffer = new byte[1024];
                 int length;
