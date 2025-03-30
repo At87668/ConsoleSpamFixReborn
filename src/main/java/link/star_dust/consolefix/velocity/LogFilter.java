@@ -15,11 +15,17 @@ public class LogFilter implements Filter {
 
     public LogFilter(VelocityCSF plugin) {
         this.plugin = plugin;
-        // 缓存需要隐藏的消息列表
+        refreshMessagesToHide(); // 初始化时加载过滤列表
+    }
+
+    /**
+     * 刷新需要隐藏的消息列表
+     */
+    public void refreshMessagesToHide() {
         try {
             this.messagesToHide = plugin.getConfigHandler().getStringList("Messages-To-Hide-Filter");
         } catch (Exception e) {
-            plugin.getLogger().error("Failed to load messages to hide from config", e);
+            plugin.getLogger().error("Failed to reload messages to hide from config", e);
         }
     }
 

@@ -19,8 +19,10 @@ public class ConfigHandler {
     private final PluginContainer pluginContainer;
     private CommentedConfigurationNode configNode;
     private ConfigurationLoader<CommentedConfigurationNode> loader;
+	private VelocityCSF VelocityCSF;
 
     public ConfigHandler(VelocityCSF velocityCSF) {
+    	this.VelocityCSF = velocityCSF;
         this.logger = velocityCSF.getLogger();
         this.dataDirectory = velocityCSF.getDataDirectory();
         this.pluginContainer = velocityCSF.getPluginContainer();
@@ -50,6 +52,8 @@ public class ConfigHandler {
         try {
             logger.info("Loading the config file...");
             configNode = loader.load();
+            LogFilter logFilter = new LogFilter(VelocityCSF);
+			logFilter.refreshMessagesToHide();
             logger.info("Config file loaded successfully!");
             return true;
         } catch (ConfigurateException e) {
