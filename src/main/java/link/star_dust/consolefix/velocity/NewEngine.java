@@ -30,13 +30,12 @@ public class NewEngine implements EngineInterface {
             csf.getLogger().error("ConfigHandler is not initialized yet!");
             return;
         }
-
         // 创建并注册过滤器
         try {
-			this.logFilter = new LogFilter(csf);
-		} catch (SerializationException e) {
-			e.printStackTrace();
-		}
+            this.logFilter = new LogFilter(csf); // 确保 logFilter 被正确初始化
+        } catch (SerializationException e) {
+            e.printStackTrace();
+        }
         org.apache.logging.log4j.core.Logger rootLogger = (org.apache.logging.log4j.core.Logger) LogManager.getRootLogger();
         rootLogger.addFilter(logFilter);
     }

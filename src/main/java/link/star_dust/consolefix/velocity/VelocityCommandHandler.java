@@ -1,17 +1,23 @@
 package link.star_dust.consolefix.velocity;
 
 import com.velocitypowered.api.command.SimpleCommand;
+
+import org.spongepowered.configurate.serialize.SerializationException;
+
 import com.velocitypowered.api.command.CommandSource;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import link.star_dust.consolefix.velocity.LogFilter;
 
 public class VelocityCommandHandler implements SimpleCommand {
     private final ConfigHandler configHandler;
     private final VelocityCSF velocityCSF;
+	private final LogFilter logFilter;
 
-    public VelocityCommandHandler(ConfigHandler configHandler, EngineInterface enginem, VelocityCSF velocityCSF) {
+    public VelocityCommandHandler(ConfigHandler configHandler, EngineInterface enginem, VelocityCSF velocityCSF, LogFilter logFilter) {
     	this.velocityCSF = velocityCSF;
         this.configHandler = configHandler;
+        this.logFilter = logFilter;
     }
 
     @Override
@@ -19,24 +25,32 @@ public class VelocityCommandHandler implements SimpleCommand {
         CommandSource source = invocation.source();
         String[] args = invocation.arguments();
 
-        // Check if the user has permission
+        // 检查权限
         if (!hasPermission(invocation)) {
-        	source.sendMessage(MiniMessage.miniMessage().deserialize("<red>You don't have permission to do that.</red>"));
+            source.sendMessage(MiniMessage.miniMessage().deserialize("<red>You don't have permission to do that.</red>"));
             return;
         }
 
-        // Parse command arguments
+        // 处理参数
         if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
-            // Reload the configuration
+            // 重新加载配置
             boolean success = configHandler.loadConfig();
-            velocityCSF.updateLogFilter();
             if (success) {
-            	source.sendMessage(MiniMessage.miniMessage().deserialize("<green>Reload successful!</green>"));
+                if (logFilter != null) { // 添加空值检查
+                    try {
+                        logFilter.refreshMessagesToHide(velocityCSF.getConfigHandler().getStringList("Messages-To-Hide-Filter"));
+                    } catch (SerializationException e) {
+                        e.printStackTrace();
+                    }
+                    source.sendMessage(MiniMessage.miniMessage().deserialize("<green>Reload successful!</green>"));
+                } else {
+                    source.sendMessage(MiniMessage.miniMessage().deserialize("<red>LogFilter is not initialized. Reload failed.</red>"));
+                }
             } else {
                 source.sendMessage(MiniMessage.miniMessage().deserialize("<red>Failed to reload the config. Check the console for errors.</red>"));
             }
         } else {
-        	source.sendMessage(MiniMessage.miniMessage().deserialize("<yellow>Reload Config: /csfv reload</yellow>"));
+            source.sendMessage(MiniMessage.miniMessage().deserialize("<yellow>Reload Config: /csfv reload</yellow>"));
         }
     }
 

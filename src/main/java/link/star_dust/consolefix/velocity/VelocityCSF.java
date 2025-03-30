@@ -64,17 +64,19 @@ public class VelocityCSF {
             logger.error("Failed to load configuration. The plugin may not function correctly.");
         }
 
-        // Initialize the engine
+        // Initialize the engine and log filter
         this.engine = new NewEngine(this);
-        this.engine.hideConsoleMessages();
-        
-        ProxyServer proxyServer = this.server;
-        proxyServer.getCommandManager().register("csfv", new VelocityCommandHandler(this.configHandler, this.engine, null));
+        this.engine.hideConsoleMessages(); // Ensure logFilter is initialized here
 
         // Initialize bStats metrics
         int pluginId = 25291; // Replace with your actual plugin ID
         metricsFactory.make(this, pluginId);
-        
+
+        // Register the command after ensuring logFilter is initialized
+        ProxyServer proxyServer = this.server;
+        proxyServer.getCommandManager().register("csfv", new VelocityCommandHandler(this.configHandler, this.engine, this, this.logFilter));
+
+        // Update log filter
         updateLogFilter();
 
         // Log successful initialization
