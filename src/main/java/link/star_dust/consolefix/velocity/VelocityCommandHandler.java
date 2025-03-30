@@ -19,9 +19,7 @@ public class VelocityCommandHandler implements SimpleCommand {
 
         // Check if the user has permission
         if (!hasPermission(invocation)) {
-            source.sendMessage(MiniMessage.miniMessage().deserialize(
-                    configHandler.getChatMessage("NoPermission")
-            ));
+        	source.sendMessage(MiniMessage.miniMessage().deserialize("<red>You don't have permission to do that.</red>"));
             return;
         }
 
@@ -30,17 +28,12 @@ public class VelocityCommandHandler implements SimpleCommand {
             // Reload the configuration
             boolean success = configHandler.loadConfig();
             if (success) {
-                source.sendMessage(MiniMessage.miniMessage().deserialize(
-                        configHandler.getChatMessage("CmdReload")
-                ));
+            	source.sendMessage(MiniMessage.miniMessage().deserialize("<green>Reload successful!</green>"));
             } else {
                 source.sendMessage(MiniMessage.miniMessage().deserialize("<red>Failed to reload the config. Check the console for errors.</red>"));
             }
         } else {
-            // Display usage message
-            source.sendMessage(MiniMessage.miniMessage().deserialize(
-                    configHandler.getChatMessage("CmdHelp")
-            ));
+        	source.sendMessage(MiniMessage.miniMessage().deserialize("<yellow>Reload Config: /csfv reload</yellow>"));
         }
     }
 

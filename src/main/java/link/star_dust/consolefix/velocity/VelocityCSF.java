@@ -13,7 +13,6 @@ import java.nio.file.Path;
 
 import javax.inject.Inject;
 
-@Plugin(id = "consolespamfixreborn", name = "ConsoleSpamFixReborn", version = "1.11.3")
 public class VelocityCSF {
     public static final String PLUGIN_NAME = "ConsoleSpamFixReborn";
     private final Logger logger;

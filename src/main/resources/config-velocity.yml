@@ -1,5 +1,5 @@
 # default config.yml for ConsoleSpamFixReborn
-# for bukkit/folia and forks
+# for velocity
 
 #Add here the messages you want to hide from your console and logs.
 #Each line represents a new message.
@@ -16,11 +16,3 @@
 Messages-To-Hide-Filter:
 - 'First example message'
 - 'Second example message'
-
-
-#Chat messages with color and format codes support.
-#Minecraft Color and Format Codes: http://minecraft.gamepedia.com/Formatting_codes    
-ChatMessages:
-    NoPermission: '[System] You don''t have permission!'
-    CmdHelp: '[System] &cAvailable commands:&6 /csf reload'
-    CmdReload: '[System] Config reload complete!'

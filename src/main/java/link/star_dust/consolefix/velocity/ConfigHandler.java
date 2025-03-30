@@ -60,9 +60,9 @@ public class ConfigHandler {
     }
 
     private void copyDefaultConfigFromJar(File configFile) {
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("config.yml")) {
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("config-velocity.yml")) {
             if (inputStream == null) {
-                logger.error("Default config file 'config.yml' is missing from the JAR!");
+                logger.error("Default config file 'config-velocity.yml' is missing from the JAR!");
                 return;
             }
 

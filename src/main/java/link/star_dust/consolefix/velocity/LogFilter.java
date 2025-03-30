@@ -24,48 +24,101 @@ public class LogFilter implements Filter {
     }
 
     @Override
-    public Result filter(LogEvent event) {
-        if (messagesToHide == null || messagesToHide.isEmpty()) {
-            return Result.NEUTRAL;
-        }
-
-        String message = event.getMessage().getFormattedMessage();
-        for (String s : messagesToHide) {
-            if (message.contains(s)) {
-                plugin.getEngine().addHiddenMsg();
-                return Result.DENY; // 阻止该日志事件
-            }
-        }
-        return Result.NEUTRAL; // 允许该日志事件
+    public Filter.Result filter(LogEvent event) {
+        return checkMessage(event.getMessage().getFormattedMessage());
     }
 
     @Override
-    public Result filter(Logger logger, Level level, Marker marker, String message, Object... params) {
+    public Filter.Result filter(Logger logger, Level level, Marker marker, String message, Object... params) {
         return checkMessage(message);
     }
 
     @Override
-    public Result filter(Logger logger, Level level, Marker marker, Object message, Throwable t) {
+    public Filter.Result filter(Logger logger, Level level, Marker marker, Object message, Throwable t) {
         return checkMessage(message.toString());
     }
 
     @Override
-    public Result filter(Logger logger, Level level, Marker marker, Message message, Throwable t) {
+    public Filter.Result filter(Logger logger, Level level, Marker marker, Message message, Throwable t) {
         return checkMessage(message.getFormattedMessage());
     }
 
-    private Result checkMessage(String message) {
+    @Override
+    public Filter.Result filter(Logger logger, Level level, Marker marker, String message, Object p0) {
+        return checkMessage(message);
+    }
+
+    @Override
+    public Filter.Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1) {
+        return checkMessage(message);
+    }
+
+    @Override
+    public Filter.Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2) {
+        return checkMessage(message);
+    }
+
+    @Override
+    public Filter.Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3) {
+        return checkMessage(message);
+    }
+
+    @Override
+    public Filter.Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4) {
+        return checkMessage(message);
+    }
+
+    @Override
+    public Filter.Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4, Object p5) {
+        return checkMessage(message);
+    }
+
+    @Override
+    public Filter.Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4, Object p5, Object p6) {
+        return checkMessage(message);
+    }
+
+    @Override
+    public Filter.Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4, Object p5, Object p6, Object p7) {
+        return checkMessage(message);
+    }
+
+    @Override
+    public Filter.Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4, Object p5, Object p6, Object p7, Object p8) {
+        return checkMessage(message);
+    }
+
+    @Override
+    public Filter.Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4, Object p5, Object p6, Object p7, Object p8, Object p9) {
+        return checkMessage(message);
+    }
+
+    public Filter.Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4, Object p5, Object p6, Object p7, Object p8, Object p9, Object p10) {
+        return checkMessage(message);
+    }
+
+    private Filter.Result checkMessage(String message) {
         if (messagesToHide == null || messagesToHide.isEmpty()) {
-            return Result.NEUTRAL;
+            return Filter.Result.NEUTRAL;
         }
 
         for (String s : messagesToHide) {
             if (message.contains(s)) {
                 plugin.getEngine().addHiddenMsg();
-                return Result.DENY;
+                return Filter.Result.DENY; // 阻止该日志事件
             }
         }
-        return Result.NEUTRAL;
+        return Filter.Result.NEUTRAL; // 允许该日志事件
+    }
+
+    @Override
+    public Filter.Result getOnMatch() {
+        return Filter.Result.NEUTRAL;
+    }
+
+    @Override
+    public Filter.Result getOnMismatch() {
+        return Filter.Result.NEUTRAL;
     }
 
     @Override
@@ -91,80 +144,4 @@ public class LogFilter implements Filter {
 
     @Override
     public void stop() {}
-
-    @Override
-    public Result getOnMatch() {
-        return Result.DENY; // 如果匹配到，则阻止日志事件
-    }
-
-    @Override
-    public Result getOnMismatch() {
-        return Result.NEUTRAL; // 如果未匹配到，则允许日志事件
-    }
-
-	@Override
-	public Result filter(Logger logger, Level level, Marker marker, String message, Object p0) {
-		return this.checkMessage(message);
-	}
-
-	@Override
-	public Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1) {
-		
-		return this.checkMessage(message);
-	}
-
-	@Override
-	public Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2) {
-		
-		return this.checkMessage(message);
-	}
-
-	@Override
-	public Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2,
-			Object p3) {
-		
-		return this.checkMessage(message);
-	}
-
-	@Override
-	public Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2,
-			Object p3, Object p4) {
-		
-		return this.checkMessage(message);
-	}
-
-	@Override
-	public Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2,
-			Object p3, Object p4, Object p5) {
-		
-		return this.checkMessage(message);
-	}
-
-	@Override
-	public Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2,
-			Object p3, Object p4, Object p5, Object p6) {
-		
-		return this.checkMessage(message);
-	}
-
-	@Override
-	public Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2,
-			Object p3, Object p4, Object p5, Object p6, Object p7) {
-		
-		return this.checkMessage(message);
-	}
-
-	@Override
-	public Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2,
-			Object p3, Object p4, Object p5, Object p6, Object p7, Object p8) {
-		
-		return this.checkMessage(message);
-	}
-
-	@Override
-	public Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2,
-			Object p3, Object p4, Object p5, Object p6, Object p7, Object p8, Object p9) {
-		
-		return this.checkMessage(message);
-	}
 }
