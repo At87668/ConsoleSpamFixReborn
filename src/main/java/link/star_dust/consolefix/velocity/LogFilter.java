@@ -101,11 +101,11 @@ public class LogFilter implements Filter {
     }
 
     private Filter.Result checkMessage(String message) {
-        if (messagesToHide == null || messagesToHide.isEmpty()) {
+        if (this.messagesToHide == null || this.messagesToHide.isEmpty()) {
             return Filter.Result.NEUTRAL;
         }
 
-        for (String s : messagesToHide) {
+        for (String s : this.messagesToHide) {
             if (message.contains(s)) {
                 plugin.getEngine().addHiddenMsg();
                 return Filter.Result.DENY; // 阻止该日志事件

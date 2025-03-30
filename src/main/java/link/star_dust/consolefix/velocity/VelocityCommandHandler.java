@@ -14,10 +14,10 @@ public class VelocityCommandHandler implements SimpleCommand {
     private final VelocityCSF velocityCSF;
 	private final LogFilter logFilter;
 
-    public VelocityCommandHandler(ConfigHandler configHandler, EngineInterface enginem, VelocityCSF velocityCSF, LogFilter logFilter) {
+    public VelocityCommandHandler(ConfigHandler configHandler, EngineInterface enginem, VelocityCSF velocityCSF, LogFilter logFilter) throws SerializationException {
     	this.velocityCSF = velocityCSF;
         this.configHandler = configHandler;
-        this.logFilter = logFilter;
+        this.logFilter = new LogFilter(velocityCSF);
     }
 
     @Override

@@ -1,7 +1,7 @@
 {
   "id": "consolespamfixreborn",
   "name": "ConsoleSpamFixReborn",
-  "version": "1.11.3",
+  "version": "1.11.3-alpha",
   "main": "link.star_dust.consolefix.velocity.VelocityCSF",
   "authors": ["Author87668"],
   "description": "Stop the console spam errors.",

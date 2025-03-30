@@ -57,7 +57,7 @@ public class VelocityCSF {
     }
 
     @Subscribe
-    public void onProxyInitialize(ProxyInitializeEvent event) {
+    public void onProxyInitialize(ProxyInitializeEvent event) throws SerializationException {
         // Initialize the configuration handler
         this.configHandler = new ConfigHandler(this);
         if (!this.configHandler.loadConfig()) {
