@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'link.star_dust'
-version '1.11.3-alpha'
+version '1.11.3-alpha.2'
 
 sourceCompatibility = 1.8
 
@@ -73,6 +73,7 @@ jar {
 
 shadowJar {
     relocate 'org.bstats', 'link.star_dust.bstats'
+    relocate 'net.kyori', 'link.star_dust.consolefix.velocity.kyori'
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     archiveClassifier.set('')
 }
