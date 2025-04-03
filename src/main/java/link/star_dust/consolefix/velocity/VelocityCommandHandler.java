@@ -6,7 +6,6 @@ import org.spongepowered.configurate.serialize.SerializationException;
 
 import com.velocitypowered.api.command.CommandSource;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import link.star_dust.consolefix.velocity.LogFilter;
 
 public class VelocityCommandHandler implements SimpleCommand {
@@ -27,7 +26,7 @@ public class VelocityCommandHandler implements SimpleCommand {
 
         // 检查权限
         if (!hasPermission(invocation)) {
-            source.sendMessage(MiniMessage.miniMessage().deserialize("<red>You don't have permission to do that.</red>"));
+            source.sendMessage(Component.text("You don't have permission to do that."));
             return;
         }
 
@@ -42,15 +41,15 @@ public class VelocityCommandHandler implements SimpleCommand {
                     } catch (SerializationException e) {
                         e.printStackTrace();
                     }
-                    source.sendMessage(MiniMessage.miniMessage().deserialize("<green>Reload successful!</green>"));
+                    source.sendMessage(Component.text("Reload successful!"));
                 } else {
-                    source.sendMessage(MiniMessage.miniMessage().deserialize("<red>LogFilter is not initialized. Reload failed.</red>"));
+                    source.sendMessage(Component.text("LogFilter is not initialized. Reload failed."));
                 }
             } else {
-                source.sendMessage(MiniMessage.miniMessage().deserialize("<red>Failed to reload the config. Check the console for errors.</red>"));
+                source.sendMessage(Component.text("Failed to reload the config. Check the console for errors."));
             }
         } else {
-            source.sendMessage(MiniMessage.miniMessage().deserialize("<yellow>Reload Config: /csfv reload</yellow>"));
+            source.sendMessage(Component.text("Reload Config: /csfv reload"));
         }
     }
 

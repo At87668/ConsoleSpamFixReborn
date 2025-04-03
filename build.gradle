@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'link.star_dust'
-version '1.11.3-alpha.2'
+version '1.11.3-alpha.3'
 
 sourceCompatibility = 1.8
 
@@ -47,8 +47,8 @@ dependencies {
     implementation 'org.bstats:bstats-bukkit:3.0.0'
     implementation 'org.bstats:bstats-velocity:3.0.0'
     implementation 'org.bstats:bstats-bungeecord:3.0.0'
-    implementation 'net.kyori:adventure-api:4.14.0'
-    implementation 'net.kyori:adventure-text-minimessage:4.14.0'
+    //implementation 'net.kyori:adventure-api:4.14.0'
+    //implementation 'net.kyori:adventure-text-minimessage:4.14.0'
 }
 
 tasks.withType(JavaCompile) {
@@ -73,7 +73,7 @@ jar {
 
 shadowJar {
     relocate 'org.bstats', 'link.star_dust.bstats'
-    relocate 'net.kyori', 'link.star_dust.consolefix.velocity.kyori'
+    //relocate 'net.kyori', 'link.star_dust.consolefix.velocity.kyori'
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     archiveClassifier.set('')
 }
