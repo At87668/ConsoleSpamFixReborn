@@ -85,4 +85,8 @@ This plugin hides **only the messages/errors you add to the config file!**
 
 #### bStats
 
-[![bStats](https://bstats.org/signatures/bukkit/ConsoleSpamFixReborn.svg)](https://bstats.org/plugin/bukkit/ConsoleSpamFixReborn/24348)
+##### Bukkit
+[![bukkit](https://bstats.org/signatures/bukkit/ConsoleSpamFixReborn.svg)](https://bstats.org/plugin/bukkit/ConsoleSpamFixReborn/24348)
+
+##### Velocity
+[![velocity](https://bstats.org/signatures/velocity/ConsoleSpamFixReborn.svg)](https://bstats.org/plugin/velocity/ConsoleSpamFixReborn/25291)
