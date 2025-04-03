@@ -6,15 +6,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
-import org.apache.logging.log4j.core.config.Configurator;
-import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilder;
-import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.log4j.core.filter.CompositeFilter;
 import org.spongepowered.configurate.serialize.SerializationException;
 
 public class LogFilterManager {
     private final VelocityCSF plugin;
-    private CompositeFilter dynamicFilter;
 
     public LogFilterManager(VelocityCSF plugin) {
         this.plugin = plugin;
@@ -24,19 +21,25 @@ public class LogFilterManager {
         LoggerContext context = (LoggerContext) LogManager.getContext(false);
         Configuration config = context.getConfiguration();
 
-        // 创建新的过滤器
-        LogFilter newFilter = new LogFilter(plugin);
-        newFilter.refreshMessagesToHide(newMessagesToHide); // 传递新配置
+        // 获取根日志记录器
+        LoggerConfig loggerConfig = config.getLoggerConfig(LogManager.ROOT_LOGGER_NAME);
 
-        // 将新过滤器添加到 CompositeFilter 中
-        if (dynamicFilter == null) {
-            dynamicFilter = CompositeFilter.createFilters(new Filter[]{newFilter});
-        } else {
-            dynamicFilter = dynamicFilter.addFilter(newFilter);
+        // 移除所有现有过滤器
+        if (loggerConfig != null) {
+        	loggerConfig.removeFilter(loggerConfig.getFilter());
         }
 
-        // 更新根日志记录器的过滤器
-        config.getRootLogger().addFilter(dynamicFilter);
-        context.updateLoggers(); // 应用配置 [[3]]
+        // 创建新的过滤器
+        LogFilter newFilter = new LogFilter(plugin);
+        newFilter.refreshMessagesToHide(newMessagesToHide); // 更新过滤规则
+
+        // 如果有新的过滤规则，则添加到 CompositeFilter
+        if (!newMessagesToHide.isEmpty()) {
+            CompositeFilter compositeFilter = CompositeFilter.createFilters(new Filter[]{newFilter});
+            loggerConfig.addFilter(compositeFilter); // 添加新的过滤器
+        }
+
+        // 应用更新后的配置
+        context.updateLoggers();
     }
 }

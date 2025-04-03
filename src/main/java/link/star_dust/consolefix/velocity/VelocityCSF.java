@@ -74,7 +74,7 @@ public class VelocityCSF {
 
         // Register the command after ensuring logFilter is initialized
         ProxyServer proxyServer = this.server;
-        proxyServer.getCommandManager().register("csfv", new VelocityCommandHandler(this.configHandler, this.engine, this, this.logFilter));
+        proxyServer.getCommandManager().register("csfv", new VelocityCommandHandler(this.configHandler, this.engine, this, this.logFilter, this.logFilterManager));
 
         // Update log filter
         updateLogFilter();

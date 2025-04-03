@@ -12,10 +12,12 @@ public class VelocityCommandHandler implements SimpleCommand {
     private final ConfigHandler configHandler;
     private final VelocityCSF velocityCSF;
 	private final LogFilter logFilter;
+	private final LogFilterManager logFilterManager;
 
-    public VelocityCommandHandler(ConfigHandler configHandler, EngineInterface enginem, VelocityCSF velocityCSF, LogFilter logFilter) throws SerializationException {
+    public VelocityCommandHandler(ConfigHandler configHandler, EngineInterface enginem, VelocityCSF velocityCSF, LogFilter logFilter, LogFilterManager logFilterManager) throws SerializationException {
     	this.velocityCSF = velocityCSF;
         this.configHandler = configHandler;
+        this.logFilterManager = new LogFilterManager(velocityCSF);
         this.logFilter = new LogFilter(velocityCSF);
     }
 
@@ -37,7 +39,7 @@ public class VelocityCommandHandler implements SimpleCommand {
             if (success) {
                 if (logFilter != null) { // 添加空值检查
                     try {
-                        logFilter.refreshMessagesToHide(velocityCSF.getConfigHandler().getStringList("Messages-To-Hide-Filter"));
+                        logFilterManager.updateFilter(velocityCSF.getConfigHandler().getStringList("Messages-To-Hide-Filter"));
                     } catch (SerializationException e) {
                         e.printStackTrace();
                     }
