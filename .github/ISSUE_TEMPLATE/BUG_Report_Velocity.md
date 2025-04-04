@@ -2,7 +2,7 @@
 name: BUG Report (velocity)
 about: If you want to report a bug, select this. (velocity)
 title: "[Velocity Version] [Issue Title]"
-labels: "❌BUG"
+labels: "❌BUG, \U0001F9CAVelocity"
 assignees: ''
 
 ---
