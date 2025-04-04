@@ -1,6 +1,6 @@
 ---
-name: BUG Report (bukkit)
-about: If you want to report a bug, select this. (bukkit)
+name: BUG Report (folia)
+about: If you want to report a bug, select this. (folia)
 title: "[Minecraft Version] [Issue Title]"
 labels: "❌BUG"
 assignees: ''
