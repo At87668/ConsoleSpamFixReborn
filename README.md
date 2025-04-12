@@ -1,5 +1,5 @@
 
-A bukkit/folia utility plugin that allows you to hide desired messages or errors that appear on server console and logs. The messages or errors are only hidden and not fixed! Useful if you want to hide errors or messages that spam the server console and get huge sized server logs. This plugin was made to stop console spam when you can't have the issue fixed, to prevent other issues because of intense console spam and unreadable console logs. It's very useful on modded servers where some mods can cause a lot of console spam. `This does not hide all errors! Only the ones you configure to be hidden!`
+A bukkit/folia/velocity/bungeecord utility plugin that allows you to hide desired messages or errors that appear on server console and logs. The messages or errors are only hidden and not fixed! Useful if you want to hide errors or messages that spam the server console and get huge sized server logs. This plugin was made to stop console spam when you can't have the issue fixed, to prevent other issues because of intense console spam and unreadable console logs. It's very useful on modded servers where some mods can cause a lot of console spam. `This does not hide all errors! Only the ones you configure to be hidden!`
 
 ***Note!** On modded servers some errors my not be hidden by this plugin due the fact that mods run on forge and some console messages are sent outside the main server thread. If you have messages that this plugin can't hide please post them on the Discussion page.*
 
@@ -44,7 +44,11 @@ A bukkit/folia utility plugin that allows you to hide desired messages or errors
 
 **Commands:**
 
-*/csf reload* - *csf.admin* - Reload the plugin config.
+*/csf reload* - *csf.admin* - Reload the plugin config. (Bukkit)
+
+*/csfv reload* - *csf.admin* - Reload the plugin config. (Velocity)
+
+*/csfb reload* - *csf.admin* - Reload the plugin config. (BungeeCord)
 
 **Configuration example:**
 
@@ -90,3 +94,8 @@ This plugin hides **only the messages/errors you add to the config file!**
 
 ##### Velocity
 [![velocity](https://bstats.org/signatures/velocity/ConsoleSpamFixReborn.svg)](https://bstats.org/plugin/velocity/ConsoleSpamFixReborn/25291)
+
+##### BungeeCord
+
+[![velocity](https://bstats.org/signatures/bungeecord/ConsoleSpamFixReborn.svg)](https://bstats.org/plugin/bungeecord/ConsoleSpamFixReborn/25292)
+
