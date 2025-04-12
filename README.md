@@ -97,5 +97,5 @@ This plugin hides **only the messages/errors you add to the config file!**
 
 ##### BungeeCord
 
-[![velocity](https://bstats.org/signatures/bungeecord/ConsoleSpamFixReborn.svg)](https://bstats.org/plugin/bungeecord/ConsoleSpamFixReborn/25292)
+[![bungee](https://bstats.org/signatures/bungeecord/ConsoleSpamFixReborn.svg)](https://bstats.org/plugin/bungeecord/ConsoleSpamFixReborn/25292)
 
