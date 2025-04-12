@@ -69,7 +69,7 @@ public class VelocityCSF {
         this.engine.hideConsoleMessages(); // Ensure logFilter is initialized here
 
         // Initialize bStats metrics
-        int pluginId = 25291; // Replace with your actual plugin ID
+        int pluginId = 25291;
         metricsFactory.make(this, pluginId);
 
         // Register the command after ensuring logFilter is initialized

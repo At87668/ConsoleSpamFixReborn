@@ -1,4 +1,4 @@
-package link.star_dust.consolefix.velocity;
+package link.star_dust.consolefix.bungee;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Marker;
@@ -8,22 +8,17 @@ import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.message.Message;
 import org.spongepowered.configurate.serialize.SerializationException;
 
-import link.star_dust.consolefix.bungee.BungeeCSF;
-
 import java.util.List;
 
 public class LogFilter implements Filter {
-    private final VelocityCSF plugin;
+	private final BungeeCSF plugin;
     private List<String> messagesToHide;
 
-    public LogFilter(VelocityCSF plugin) throws SerializationException {
+    public LogFilter(BungeeCSF plugin) {
         this.plugin = plugin;
         refreshMessagesToHide(plugin.getConfigHandler().getStringList("Messages-To-Hide-Filter"));
     }
 
-	/**
-     * 刷新需要隐藏的消息列表
-     */
     public void refreshMessagesToHide(List<String> newMessagesToHide) {
         this.messagesToHide = newMessagesToHide;
     }
