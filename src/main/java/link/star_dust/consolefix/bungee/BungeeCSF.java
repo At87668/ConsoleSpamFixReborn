@@ -26,7 +26,7 @@ public class BungeeCSF extends Plugin {
 
         // 初始化 bStats metrics
         int pluginId = 25292;
-        metrics = new Metrics(this, pluginId);
+        new Metrics(this, pluginId);
 
         // 注册命令
         ProxyServer.getInstance().getPluginManager().registerCommand(this, new BungeeCommandHandler(configHandler, engine, this));
