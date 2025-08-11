@@ -73,42 +73,6 @@ public final class CSF extends JavaPlugin {
             this.oldEngine = true;
             this.is19Server = true;
             this.is13Server = false;
-        } else if (version.matches("1.13") || version.matches("1.13.1") || version.matches("1.13.2")) {
-            this.oldEngine = false;
-            this.is19Server = true;
-            this.is13Server = true;
-        } else if (version.matches("1.14") || version.matches("1.14.1") || version.matches("1.14.2") || version.matches("1.14.3") || version.matches("1.14.4")) {
-            this.oldEngine = false;
-            this.is19Server = true;
-            this.is13Server = true;
-        } else if (version.matches("1.15") || version.matches("1.15.1") || version.matches("1.15.2")) {
-            this.oldEngine = false;
-            this.is19Server = true;
-            this.is13Server = true;
-        } else if (version.matches("1.16") || version.matches("1.16.1") || version.matches("1.16.2") || version.matches("1.16.3") || version.matches("1.16.4") || version.matches("1.16.5")) {
-            this.oldEngine = false;
-            this.is19Server = true;
-            this.is13Server = true;
-        } else if (version.matches("1.17") || version.matches("1.17.1")) {
-            this.oldEngine = false;
-            this.is19Server = true;
-            this.is13Server = true;
-        } else if (version.matches("1.18") || version.matches("1.18.1") || version.matches("1.18.2")) {
-            this.oldEngine = false;
-            this.is19Server = true;
-            this.is13Server = true;
-        } else if (version.matches("1.19") || version.matches("1.19.1") || version.matches("1.19.2") || version.matches("1.19.3") || version.matches("1.19.4")) {
-            this.oldEngine = false;
-            this.is19Server = true;
-            this.is13Server = true;
-        } else if (version.matches("1.20") || version.matches("1.20.1") || version.matches("1.20.2") || version.matches("1.20.3") || version.matches("1.20.4") || version.matches("1.20.5") || version.matches("1.20.6")) {
-            this.is13Server = true;
-            this.is19Server = true;
-            this.oldEngine = false;
-        } else if (version.matches("1.21") || version.matches("1.21.1") || version.matches("1.21.2") || version.matches("1.21.3") || version.matches("1.21.4") || version.matches("1.21.5")) {
-            this.is13Server = true;
-            this.is19Server = true;
-            this.oldEngine = false;
         } else {
         	this.is13Server = true;
             this.is19Server = true;

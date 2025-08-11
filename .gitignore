@@ -1,0 +1,23 @@
+# Gradle
+.gradle/
+
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+build/
+bin/
+
+wiki/
+
+.vscode/
+*.code-workspace
+
+*.class
+*.py
+
+Updates.md
+
+txt-out/
+batch_convert_to_txt.py
+txt_integrater.py

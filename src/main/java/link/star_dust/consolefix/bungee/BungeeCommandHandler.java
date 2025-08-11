@@ -17,6 +17,10 @@ public class BungeeCommandHandler extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+		if (!sender.hasPermission("csf.admin")) {
+            sender.sendMessage("§cYou don't have permission to do that.");
+            return;
+        }
         if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
             boolean success = configHandler.loadConfig();
             if (success) {
