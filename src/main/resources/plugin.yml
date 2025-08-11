@@ -1,6 +1,10 @@
 name: ConsoleSpamFixReborn
 main: link.star_dust.consolefix.CSF
+<<<<<<< HEAD
 version: 1.11.7
+=======
+version: 1.11.6
+>>>>>>> f1a3ab89da87723583d8aadf0aa12e3c2a9e49d7
 authors: [CraftersLand, Author87668]
 folia-supported: true
 website: https://www.spigotmc.org/resources/121703/
