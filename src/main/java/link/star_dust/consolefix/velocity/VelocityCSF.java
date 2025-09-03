@@ -1,5 +1,6 @@
 package link.star_dust.consolefix.velocity;
 
+import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
@@ -15,8 +16,6 @@ import org.slf4j.Logger;
 import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.nio.file.Path;
-
-import javax.inject.Inject;
 
 @SuppressWarnings("unused")
 @Plugin(id = "consolefixreborn", name = "ConsoleSpamFixReborn", version = "1.0.0", description = "Fixes console spam", authors = {"CraftersLand", "Author87668"})
