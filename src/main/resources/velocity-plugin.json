@@ -1,9 +1,10 @@
 {
   "id": "consolespamfixreborn",
   "name": "ConsoleSpamFixReborn",
-  "version": "1.11.7",
+  "version": "1.11.8",
   "main": "link.star_dust.consolefix.velocity.VelocityCSF",
   "authors": ["Author87668"],
+  "contributors": ["VRXDev2"],
   "description": "Stop the console spam errors.",
   "website": "https://www.spigotmc.org/resources/121703/"
 }

@@ -1,7 +1,7 @@
 author: Author87668
 name: ConsoleSpamFixReborn
 main: link.star_dust.consolefix.bungee.BungeeCSF
-version: 1.11.7
+version: 1.11.8
 authors: [Author87668]
 website: https://www.spigotmc.org/resources/121703/
 load: STARTUP
