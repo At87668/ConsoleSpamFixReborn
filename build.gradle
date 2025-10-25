@@ -5,11 +5,7 @@ plugins {
 }
 
 group 'link.star_dust'
-<<<<<<< HEAD
 version '1.11.7'
-=======
-version '1.11.6'
->>>>>>> f1a3ab89da87723583d8aadf0aa12e3c2a9e49d7
 
 sourceCompatibility = 1.8
 
@@ -55,7 +51,7 @@ dependencies {
     //implementation 'net.kyori:adventure-text-minimessage:4.14.0'
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
