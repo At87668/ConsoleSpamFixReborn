@@ -69,8 +69,12 @@ A bukkit/folia/velocity/bungeecord utility plugin that allows you to hide desire
 #  If you have large errors you dont have to type the full error. But the more words you add the more accurate will be and will not hide other messages that may contain the words added in the filter.
 
 Messages-To-Hide-Filter:
-- 'First example message'
-- 'Second example message'
+  contains:
+    - 'First example message'
+    - 'Second example message'
+  regex:
+    - '^Third example message$'
+    - '^\[.*\] Fourth example message$'
 
 
 #Chat messages with color and format codes support.
