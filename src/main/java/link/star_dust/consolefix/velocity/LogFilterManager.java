@@ -41,7 +41,7 @@ public class LogFilterManager {
             context.updateLoggers();
 
         } catch (SerializationException e) {
-            plugin.getLogger().error("[ConsoleSpamFix] Failed to load Messages-To-Hide-Filter", e);
+            plugin.getLogger().error("Failed to load Messages-To-Hide-Filter", e);
         }
     }
 

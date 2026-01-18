@@ -42,7 +42,7 @@ public class LogFilter implements Filter {
         try {
             return Pattern.compile(raw);
         } catch (PatternSyntaxException e) {
-            pl.getLogger().warning("[ConsoleSpamFix] Invalid regex ignored: " + raw);
+            pl.getLogger().warning("Invalid regex ignored: " + raw);
             return null;
         }
     }

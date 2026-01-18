@@ -46,7 +46,7 @@ public class LogFilter implements Filter {
         try {
             return Pattern.compile(raw);
         } catch (PatternSyntaxException e) {
-            plugin.getLogger().warn("[ConsoleSpamFix] Invalid regex ignored: " + raw);
+            plugin.getLogger().warn("Invalid regex ignored: " + raw);
             return null;
         }
     }
