@@ -38,11 +38,7 @@ public class VelocityCommandHandler implements SimpleCommand {
             boolean success = configHandler.loadConfig();
             if (success) {
                 if (logFilter != null) { // 添加空值检查
-                    try {
-                        logFilterManager.updateFilter(velocityCSF.getConfigHandler().getStringList("Messages-To-Hide-Filter"));
-                    } catch (SerializationException e) {
-                        e.printStackTrace();
-                    }
+                    logFilterManager.updateFilter();
                     source.sendMessage(Component.text("Reload successful!"));
                 } else {
                     source.sendMessage(Component.text("LogFilter is not initialized. Reload failed."));

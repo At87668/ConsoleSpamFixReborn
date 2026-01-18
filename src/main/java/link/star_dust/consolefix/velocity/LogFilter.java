@@ -11,21 +11,44 @@ import org.spongepowered.configurate.serialize.SerializationException;
 import link.star_dust.consolefix.bungee.BungeeCSF;
 
 import java.util.List;
+import java.util.Collections;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 public class LogFilter implements Filter {
     private final VelocityCSF plugin;
-    private List<String> messagesToHide;
+
+    private volatile List<String> containsFilters = Collections.emptyList();
+    private volatile List<Pattern> regexFilters = Collections.emptyList();
 
     public LogFilter(VelocityCSF plugin) throws SerializationException {
         this.plugin = plugin;
-        refreshMessagesToHide(plugin.getConfigHandler().getStringList("Messages-To-Hide-Filter"));
+        reloadFilters();
     }
 
 	/**
      * 刷新需要隐藏的消息列表
      */
-    public void refreshMessagesToHide(List<String> newMessagesToHide) {
-        this.messagesToHide = newMessagesToHide;
+    public void reloadFilters() throws SerializationException {
+        this.containsFilters =
+                plugin.getConfigHandler().getStringList("Messages-To-Hide-Filter.contains");
+
+        this.regexFilters =
+                plugin.getConfigHandler()
+                        .getStringList("Messages-To-Hide-Filter.regex")
+                        .stream()
+                        .map(this::compileRegexSafe)
+                        .filter(p -> p != null)
+                        .toList();
+    }
+
+    private Pattern compileRegexSafe(String raw) {
+        try {
+            return Pattern.compile(raw);
+        } catch (PatternSyntaxException e) {
+            plugin.getLogger().warn("[ConsoleSpamFix] Invalid regex ignored: " + raw);
+            return null;
+        }
     }
 
     @Override
@@ -103,17 +126,21 @@ public class LogFilter implements Filter {
     }
 
     private Filter.Result checkMessage(String message) {
-        if (this.messagesToHide == null || this.messagesToHide.isEmpty()) {
-            return Filter.Result.NEUTRAL;
-        }
-
-        for (String s : this.messagesToHide) {
+        for (String s : containsFilters) {
             if (message.contains(s)) {
                 plugin.getEngine().addHiddenMsg();
-                return Filter.Result.DENY; // 阻止该日志事件
+                return Filter.Result.DENY;
             }
         }
-        return Filter.Result.NEUTRAL; // 允许该日志事件
+
+        for (Pattern p : regexFilters) {
+            if (p.matcher(message).find()) {
+                plugin.getEngine().addHiddenMsg();
+                return Filter.Result.DENY;
+            }
+        }
+
+        return Filter.Result.NEUTRAL;
     }
 
     @Override
