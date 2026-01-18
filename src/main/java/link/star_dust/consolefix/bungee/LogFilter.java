@@ -9,18 +9,41 @@ import org.apache.logging.log4j.message.Message;
 import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.util.List;
+import java.util.Collections;
+import java.util.regex.Pattern;
 
 public class LogFilter implements Filter {
 	private final BungeeCSF plugin;
-    private List<String> messagesToHide;
+
+    private volatile List<String> containsFilters = Collections.emptyList();
+    private volatile List<Pattern> regexFilters   = Collections.emptyList();
 
     public LogFilter(BungeeCSF plugin) {
         this.plugin = plugin;
-        refreshMessagesToHide(plugin.getConfigHandler().getStringList("Messages-To-Hide-Filter"));
+        reloadFilters();
     }
 
-    public void refreshMessagesToHide(List<String> newMessagesToHide) {
-        this.messagesToHide = newMessagesToHide;
+    public void reloadFilters() {
+        this.containsFilters =
+                plugin.getConfigHandler()
+                        .getStringList("Messages-To-Hide-Filter.contains");
+
+        this.regexFilters =
+                plugin.getConfigHandler()
+                        .getStringList("Messages-To-Hide-Filter.regex")
+                        .stream()
+                        .map(this::compileRegexSafe)
+                        .filter(p -> p != null)
+                        .toList();
+    }
+
+    private Pattern compileRegexSafe(String raw) {
+        try {
+            return Pattern.compile(raw);
+        } catch (Exception e) {
+            // Ignore invalid regex
+            return null;
+        }
     }
 
     @Override
@@ -98,17 +121,21 @@ public class LogFilter implements Filter {
     }
 
     private Filter.Result checkMessage(String message) {
-        if (this.messagesToHide == null || this.messagesToHide.isEmpty()) {
-            return Filter.Result.NEUTRAL;
-        }
-
-        for (String s : this.messagesToHide) {
+        for (String s : containsFilters) {
             if (message.contains(s)) {
                 plugin.getEngine().addHiddenMsg();
-                return Filter.Result.DENY; // 阻止该日志事件
+                return Filter.Result.DENY;
             }
         }
-        return Filter.Result.NEUTRAL; // 允许该日志事件
+
+        for (Pattern p : regexFilters) {
+            if (p.matcher(message).find()) {
+                plugin.getEngine().addHiddenMsg();
+                return Filter.Result.DENY;
+            }
+        }
+
+        return Filter.Result.NEUTRAL;
     }
 
     @Override
