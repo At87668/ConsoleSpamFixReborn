@@ -21,7 +21,7 @@ repositories {
     }
     maven {
 	    name = 'Velocity'
-	    url = 'https://nexus.velocitypowered.com/repository/maven-public/'
+	    url = 'https://repo.papermc.io/repository/maven-public/'
 	}
 	maven {
         name = 'bStats'
