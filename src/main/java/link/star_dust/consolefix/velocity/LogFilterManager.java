@@ -12,34 +12,37 @@ import org.spongepowered.configurate.serialize.SerializationException;
 
 public class LogFilterManager {
     private final VelocityCSF plugin;
+    private LogFilter activeFilter;
 
     public LogFilterManager(VelocityCSF plugin) {
         this.plugin = plugin;
     }
 
-    public void updateFilter(List<String> newMessagesToHide) throws SerializationException {
+    public void updateFilter() {
         LoggerContext context = (LoggerContext) LogManager.getContext(false);
         Configuration config = context.getConfiguration();
-
-        // 获取根日志记录器
         LoggerConfig loggerConfig = config.getLoggerConfig(LogManager.ROOT_LOGGER_NAME);
 
-        // 移除所有现有过滤器
-        if (loggerConfig != null) {
-        	loggerConfig.removeFilter(loggerConfig.getFilter());
+        if (loggerConfig == null) return;
+
+        try {
+            // Remove previous filter if exists
+            if (activeFilter != null) {
+                loggerConfig.removeFilter(activeFilter);
+            }
+
+            // Create new filter and load config safely
+            LogFilter newFilter = new LogFilter(plugin);
+            newFilter.reloadFilters();
+            activeFilter = newFilter;
+
+            // Attach to logger
+            loggerConfig.addFilter(activeFilter);
+            context.updateLoggers();
+
+        } catch (SerializationException e) {
+            plugin.getLogger().error("Failed to load Messages-To-Hide-Filter", e);
         }
-
-        // 创建新的过滤器
-        LogFilter newFilter = new LogFilter(plugin);
-        newFilter.refreshMessagesToHide(newMessagesToHide); // 更新过滤规则
-
-        // 如果有新的过滤规则，则添加到 CompositeFilter
-        if (!newMessagesToHide.isEmpty()) {
-            CompositeFilter compositeFilter = CompositeFilter.createFilters(new Filter[]{newFilter});
-            loggerConfig.addFilter(compositeFilter); // 添加新的过滤器
-        }
-
-        // 应用更新后的配置
-        context.updateLoggers();
     }
+
 }

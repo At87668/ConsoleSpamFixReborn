@@ -9,23 +9,61 @@ import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.message.Message;
 
 import java.util.concurrent.TimeUnit;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 public class LogFilter implements Filter {
     private CSF pl;
 
+    private volatile List<String> containsFilters = Collections.emptyList();
+    private volatile List<Pattern> regexFilters = Collections.emptyList();
+
     public LogFilter(CSF plugin) {
         this.pl = plugin;
+        reloadFilters();
     }
 
-    public Filter.Result checkMessage(String message) {
-        if (!this.pl.getConfigHandler().getStringList("Messages-To-Hide-Filter").isEmpty()) {
-            for (String s : this.pl.getConfigHandler().getStringList("Messages-To-Hide-Filter")) {
-                if (!message.contains(s)) continue;
-                this.pl.getEngine().addHiddenMsg();
-                return Filter.Result.DENY;
+    public void reloadFilters() {
+        this.containsFilters =
+                pl.getConfigHandler().getStringList("Messages-To-Hide-Filter.contains");
+
+        this.regexFilters =
+                pl.getConfigHandler()
+                        .getStringList("Messages-To-Hide-Filter.regex")
+                        .stream()
+                        .map(this::compileRegexSafe)
+                        .filter(p -> p != null)
+                        .toList();
+    }
+
+    private Pattern compileRegexSafe(String raw) {
+        try {
+            return Pattern.compile(raw);
+        } catch (PatternSyntaxException e) {
+            pl.getLogger().warning("Invalid regex ignored: " + raw);
+            return null;
+        }
+    }
+
+    private Filter.Result checkMessage(String message) {
+
+        for (String s : containsFilters) {
+            if (message.contains(s)) {
+                pl.getEngine().addHiddenMsg();
+                return Result.DENY;
             }
         }
-        return Filter.Result.NEUTRAL;
+
+        for (Pattern pattern : regexFilters) {
+            if (pattern.matcher(message).find()) {
+                pl.getEngine().addHiddenMsg();
+                return Result.DENY;
+            }
+        }
+
+        return Result.NEUTRAL;
     }
 
     public LifeCycle.State getState() {
