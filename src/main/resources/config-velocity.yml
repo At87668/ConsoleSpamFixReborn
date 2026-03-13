@@ -20,3 +20,6 @@ Messages-To-Hide-Filter:
   regex:
     - '^Third example message$'
     - '^\[.*\] Fourth example message$'
+
+# !NOTE: DONT CHANGE CONFIG VERSION!
+_config-version: 2

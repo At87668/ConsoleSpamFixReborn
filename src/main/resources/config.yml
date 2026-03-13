@@ -28,3 +28,6 @@ ChatMessages:
     NoPermission: '[System] You don''t have permission!'
     CmdHelp: '[System] &cAvailable commands:&6 /csf reload'
     CmdReload: '[System] Config reload complete!'
+
+# !NOTE: DONT CHANGE CONFIG VERSION!
+_config-version: 2
