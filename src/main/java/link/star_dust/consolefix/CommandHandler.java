@@ -25,6 +25,7 @@ public class CommandHandler implements CommandExecutor {
                         sender.sendMessage(this.csf.getConfigHandler().getStringWithColor("ChatMessages.CmdReload"));
                     }
                     this.csf.getConfigHandler().loadConfig();
+                    this.csf.getLogFilterManager().updateFilter();
                 }
             } else {
                 sender.sendMessage(this.csf.getConfigHandler().getStringWithColor("ChatMessages.CmdHelp"));

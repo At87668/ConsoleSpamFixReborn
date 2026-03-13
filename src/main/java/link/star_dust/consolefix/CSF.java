@@ -18,6 +18,7 @@ public final class CSF extends JavaPlugin {
     public boolean oldEngine = false;
     private static ConfigHandler cH;
     private static EngineInterface eng;
+    private static LogFilterManager logFilterManager;
 
     static {
         pluginName = "ConsoleSpamFixReborn";
@@ -31,6 +32,7 @@ public final class CSF extends JavaPlugin {
         this.getMcVersion();
         cH = new ConfigHandler(this);
         eng = this.oldEngine ? new OldEngine(this) : new NewEngine(this);
+        logFilterManager = new LogFilterManager(this);
         CommandHandler cmd = new CommandHandler(this);
         
         int pluginId = 24348;
@@ -47,7 +49,8 @@ public final class CSF extends JavaPlugin {
         }
         // Debugging end
 
-        this.getEngine().hideConsoleMessages();
+        // 使用 LogFilterManager 初始化过滤器
+        this.getLogFilterManager().updateFilter();
         log.info(pluginName + " loaded successfully!");
     }
 
@@ -86,5 +89,9 @@ public final class CSF extends JavaPlugin {
 
     public EngineInterface getEngine() {
         return eng;
+    }
+
+    public LogFilterManager getLogFilterManager() {
+        return logFilterManager;
     }
 }

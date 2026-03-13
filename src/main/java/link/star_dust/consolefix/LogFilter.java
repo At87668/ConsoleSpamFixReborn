@@ -35,7 +35,7 @@ public class LogFilter implements Filter {
                         .stream()
                         .map(this::compileRegexSafe)
                         .filter(p -> p != null)
-                        .toList();
+                        .collect(java.util.stream.Collectors.toList());
     }
 
     private Pattern compileRegexSafe(String raw) {

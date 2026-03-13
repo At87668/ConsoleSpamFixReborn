@@ -29,19 +29,23 @@ public class LogFilterManager {
             // Remove previous filter if exists
             if (activeFilter != null) {
                 loggerConfig.removeFilter(activeFilter);
+                plugin.getLogger().info("Removed previous filter");
             }
 
             // Create new filter and load config safely
+            plugin.getLogger().info("Creating new LogFilter...");
             LogFilter newFilter = new LogFilter(plugin);
-            newFilter.reloadFilters();
+            plugin.getLogger().info("LogFilter created successfully");
+            
             activeFilter = newFilter;
 
             // Attach to logger
             loggerConfig.addFilter(activeFilter);
             context.updateLoggers();
+            plugin.getLogger().info("LogFilter attached to logger successfully");
 
-        } catch (SerializationException e) {
-            plugin.getLogger().error("Failed to load Messages-To-Hide-Filter", e);
+        } catch (Exception e) {
+            plugin.getLogger().error("Failed to load Messages-To-Hide-Filter: " + e.getMessage(), e);
         }
     }
 
