@@ -53,3 +53,125 @@ public class LogFilter implements Filter {
     public Filter.Result filter(LogEvent event) {
         return checkMessage(event.getMessage().getFormattedMessage());
     }
+
+    @Override
+    public Filter.Result filter(Logger logger, Level level, Marker marker, String message, Object... params) {
+        return checkMessage(message);
+    }
+
+    @Override
+    public Filter.Result filter(Logger logger, Level level, Marker marker, Object message, Throwable t) {
+        return checkMessage(message.toString());
+    }
+
+    @Override
+    public Filter.Result filter(Logger logger, Level level, Marker marker, Message message, Throwable t) {
+        return checkMessage(message.getFormattedMessage());
+    }
+
+    @Override
+    public Filter.Result filter(Logger logger, Level level, Marker marker, String message, Object p0) {
+        return checkMessage(message);
+    }
+
+    @Override
+    public Filter.Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1) {
+        return checkMessage(message);
+    }
+
+    @Override
+    public Filter.Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2) {
+        return checkMessage(message);
+    }
+
+    @Override
+    public Filter.Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3) {
+        return checkMessage(message);
+    }
+
+    @Override
+    public Filter.Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4) {
+        return checkMessage(message);
+    }
+
+    @Override
+    public Filter.Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4, Object p5) {
+        return checkMessage(message);
+    }
+
+    @Override
+    public Filter.Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4, Object p5, Object p6) {
+        return checkMessage(message);
+    }
+
+    @Override
+    public Filter.Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4, Object p5, Object p6, Object p7) {
+        return checkMessage(message);
+    }
+
+    @Override
+    public Filter.Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4, Object p5, Object p6, Object p7, Object p8) {
+        return checkMessage(message);
+    }
+
+    @Override
+    public Filter.Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4, Object p5, Object p6, Object p7, Object p8, Object p9) {
+        return checkMessage(message);
+    }
+
+    public Filter.Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4, Object p5, Object p6, Object p7, Object p8, Object p9, Object p10) {
+        return checkMessage(message);
+    }
+
+    private Filter.Result checkMessage(String message) {
+        for (String s : containsFilters) {
+            if (message.contains(s)) {
+                plugin.getEngine().addHiddenMsg();
+                return Filter.Result.DENY;
+            }
+        }
+
+        for (Pattern p : regexFilters) {
+            if (p.matcher(message).find()) {
+                plugin.getEngine().addHiddenMsg();
+                return Filter.Result.DENY;
+            }
+        }
+
+        return Filter.Result.NEUTRAL;
+    }
+
+    @Override
+    public Filter.Result getOnMatch() {
+        return Filter.Result.NEUTRAL;
+    }
+
+    @Override
+    public Filter.Result getOnMismatch() {
+        return Filter.Result.NEUTRAL;
+    }
+
+    @Override
+    public State getState() {
+        return State.STARTED;
+    }
+
+    @Override
+    public void initialize() {}
+
+    @Override
+    public boolean isStarted() {
+        return true;
+    }
+
+    @Override
+    public boolean isStopped() {
+        return false;
+    }
+
+    @Override
+    public void start() {}
+
+    @Override
+    public void stop() {}
+}
