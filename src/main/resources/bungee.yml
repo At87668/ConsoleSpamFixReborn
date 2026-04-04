@@ -1,8 +1,8 @@
-author: Author87668
 name: ConsoleSpamFixReborn
 main: link.star_dust.consolefix.bungee.BungeeCSF
-version: 1.11.9
+version: 1.12.0
 authors: [Author87668]
+contributors: [VRXDev2]
 website: https://www.spigotmc.org/resources/121703/
 load: STARTUP
 description: Stop the console spam errors.
