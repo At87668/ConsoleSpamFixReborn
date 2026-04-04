@@ -8,8 +8,6 @@ import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.message.Message;
 import org.spongepowered.configurate.serialize.SerializationException;
 
-import link.star_dust.consolefix.bungee.BungeeCSF;
-
 import java.util.List;
 import java.util.Collections;
 import java.util.regex.Pattern;
@@ -26,7 +24,7 @@ public class LogFilter implements Filter {
         reloadFilters();
     }
 
-	/**
+    /**
      * 刷新需要隐藏的消息列表
      */
     public void reloadFilters() throws SerializationException {

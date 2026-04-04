@@ -86,7 +86,7 @@ public class ConfigHandler {
                     .path(configFile.toPath())
                     .build();
             CommentedConfigurationNode existingConfig = existingLoader.load();
-            
+
             // 获取现有配置文件的版本
             int existingVersion = existingConfig.node("_config-version").getInt(0);
             
@@ -119,7 +119,7 @@ public class ConfigHandler {
                         logger.error("Failed to create backup: " + e.getMessage());
                         return;
                     }
-                    
+
                     // 删除旧配置文件
                     if (!configFile.delete()) {
                         logger.error("Failed to delete old config file!");
@@ -142,17 +142,19 @@ public class ConfigHandler {
     }
 
     public List<String> getStringList(String key) throws SerializationException {
-        if (configNode.node(key).virtual()) {
+        Object[] path = key.split("\\.");
+        if (configNode.node(path).virtual()) {
             throw new RuntimeException("Missing required key in config.yml: " + key);
         }
-        return configNode.node(key).getList(String.class);
+        return configNode.node(path).getList(String.class);
     }
 
     public String getString(String key) {
-        if (configNode.node(key).virtual()) {
+        Object[] path = key.split("\\.");
+        if (configNode.node(path).virtual()) {
             throw new RuntimeException("Missing required key in config.yml: " + key);
         }
-        return configNode.node(key).getString();
+        return configNode.node(path).getString();
     }
 
     public String getChatMessage(String key) {
