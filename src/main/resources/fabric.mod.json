@@ -9,6 +9,9 @@
   "entrypoints": {
     "server": [
       "link.star_dust.consolefix.fabric.FabricCSF"
+    ],
+    "client": [
+      "link.star_dust.consolefix.fabric.FabricClientCSF"
     ]
   },
   "depends": {
