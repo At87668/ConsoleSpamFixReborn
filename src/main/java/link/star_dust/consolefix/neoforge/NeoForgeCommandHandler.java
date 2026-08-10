@@ -9,7 +9,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import java.util.function.Predicate;
 
 /**
- * Registers the {@code /csfm reload} brigadier command and executes it.
+ * Registers the {@code /csf reload} brigadier command and executes it.
  * The command source ({@code CommandSourceStack}) is held as {@code Object}
  * and permission checks go through {@link NeoForgeReflection}.
  */
@@ -35,10 +35,10 @@ final class NeoForgeCommandHandler {
             }
         };
 
-        LiteralArgumentBuilder csfm = LiteralArgumentBuilder.literal("csfm");
-        csfm.requires(requires);
-        csfm.executes(ctxCmd -> {
-            new NeoForgeCommandBridge(ctxCmd.getSource()).sendMessage("Reload Config: /csfm reload");
+        LiteralArgumentBuilder csf = LiteralArgumentBuilder.literal("csf");
+        csf.requires(requires);
+        csf.executes(ctxCmd -> {
+            new NeoForgeCommandBridge(ctxCmd.getSource()).sendMessage("Reload Config: /csf reload");
             return 1;
         });
 
@@ -52,7 +52,7 @@ final class NeoForgeCommandHandler {
             return 1;
         });
 
-        csfm.then(reload);
-        dispatcher.register(csfm);
+        csf.then(reload);
+        dispatcher.register(csf);
     }
 }

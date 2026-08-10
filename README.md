@@ -56,7 +56,7 @@ Requires **Java 17+** and Minecraft **1.18+** (all platforms). The Fabric/Forge/
 
 */csfb reload* - *csf.admin* - Reload the plugin config. (BungeeCord)
 
-*/csfm reload* - *csf.admin* - Reload the plugin config. (Fabric / Forge / NeoForge)
+*/csf reload* - *csf.admin* - Reload the plugin config. (Fabric / Forge / NeoForge)
 
 **Configuration example:**
 

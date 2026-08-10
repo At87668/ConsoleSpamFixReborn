@@ -13,7 +13,7 @@ import java.nio.file.Path;
 
 /**
  * Fabric entry point (server-side). Loads the config, attaches the log4j
- * filter via the shared core and registers the {@code /csfm reload} command
+ * filter via the shared core and registers the {@code /csf reload} command
  * through the reflection-based event bus.
  */
 public class FabricCSF implements DedicatedServerModInitializer {
@@ -33,7 +33,7 @@ public class FabricCSF implements DedicatedServerModInitializer {
         // Attach the filter (single mechanism, also used on reload).
         filterManager.updateFilter();
 
-        // Register /csfm reload via a dynamic-proxy CommandRegistrationCallback.
+        // Register /csf reload via a dynamic-proxy CommandRegistrationCallback.
         FabricEventBus.registerCommandRegistration(dispatcherObj ->
                 new FabricCommandHandler(ctx, filterManager)
                         .register((com.mojang.brigadier.CommandDispatcher<?>) dispatcherObj));
