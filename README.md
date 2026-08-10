@@ -1,6 +1,6 @@
 ***Based on brunyman's [Console Spam Fix](https://www.spigotmc.org/resources/console-spam-fix.18410/).***
 
-
+**The code for version 2 has been completely rewritten.**
 
 A bukkit/folia/velocity/bungeecord/fabric/forge/neoforge utility plugin that allows you to hide desired messages or errors that appear on server console and logs. The messages or errors are only hidden and not fixed! Useful if you want to hide errors or messages that spam the server console and get huge sized server logs. This plugin was made to stop console spam when you can't have the issue fixed, to prevent other issues because of intense console spam and unreadable console logs. It's very useful on modded servers where some mods can cause a lot of console spam. `This does not hide all errors! Only the ones you configure to be hidden!`
 
