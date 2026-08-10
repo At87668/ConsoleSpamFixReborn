@@ -1,48 +1,61 @@
 package link.star_dust.consolefix.bungee;
 
-import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.plugin.Plugin;
 import org.bstats.bungeecord.Metrics;
-import org.slf4j.Logger;
-import java.nio.file.Path;
-import java.util.List;
 
+import link.star_dust.consolefix.common.CsfContext;
+import link.star_dust.consolefix.common.EngineInterface;
+import link.star_dust.consolefix.core.LogFilterManager;
+import link.star_dust.consolefix.core.NewEngine;
+
+import java.nio.file.Path;
+
+/**
+ * BungeeCord entry point. Platform wiring only — the actual log filtering
+ * is delegated to the shared {@code core} layer through the
+ * {@link CsfContext} / {@link EngineInterface} contracts.
+ */
 public class BungeeCSF extends Plugin {
     public static final String PLUGIN_NAME = "ConsoleSpamFixReborn";
     private ConfigHandler configHandler;
+    private CsfContext csfContext;
     private EngineInterface engine;
+    private LogFilterManager logFilterManager;
     private Metrics metrics;
 
     @Override
     public void onEnable() {
-        // 初始化配置处理器
+        // Initialise the config handler.
         this.configHandler = new ConfigHandler(this);
         if (!this.configHandler.loadConfig()) {
             getLogger().warning("Failed to load configuration. The plugin may not function correctly.");
         }
 
-        // 初始化引擎
-        this.engine = new NewEngine(this);
+        // Initialise the platform-agnostic core.
+        this.csfContext = new BungeeCsfContext(this, configHandler);
+        this.engine = new NewEngine(csfContext);
+        this.logFilterManager = new LogFilterManager(csfContext, engine);
 
-        // 初始化 bStats metrics
+        // Initialise bStats metrics.
         int pluginId = 25292;
         new Metrics(this, pluginId);
 
-        // 注册命令
-        ProxyServer.getInstance().getPluginManager().registerCommand(this, new BungeeCommandHandler(configHandler, engine, this));
+        // Register the command.
+        ProxyServer.getInstance().getPluginManager().registerCommand(this, new BungeeCommandHandler(configHandler, this));
 
-        // 更新日志过滤器
+        // Update the log filter.
         updateLogFilter();
 
         getLogger().info(PLUGIN_NAME + " " + "v" + getDescription().getVersion() + " loaded successfully!");
     }
 
     public void updateLogFilter() {
-        if (this.engine == null || this.configHandler == null) {
-            getLogger().warning("Cannot update log filter: Engine or ConfigHandler is not initialized yet!");
+        if (this.engine == null || this.logFilterManager == null) {
+            getLogger().warning("Cannot update log filter: Engine or LogFilterManager is not initialized yet!");
             return;
         }
-        this.engine.hideConsoleMessages();
+        this.logFilterManager.updateFilter();
     }
 
     public ConfigHandler getConfigHandler() {
@@ -51,6 +64,10 @@ public class BungeeCSF extends Plugin {
 
     public EngineInterface getEngine() {
         return engine;
+    }
+
+    public CsfContext getCsfContext() {
+        return csfContext;
     }
 
     public Path getDataDirectory() {
