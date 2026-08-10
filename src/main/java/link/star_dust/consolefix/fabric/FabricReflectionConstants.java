@@ -91,6 +91,8 @@ final class FabricReflectionConstants {
     static final String CLS_MINECRAFT_SERVER    = "net.minecraft.server.MinecraftServer";
     static final String CLS_PLAYER_LIST         = "net.minecraft.server.players.PlayerList";
     static final String CLS_COMMAND_SOURCE_STACK = "net.minecraft.commands.CommandSourceStack";
+    static final String CLS_SERVER_PLAYER       = "net.minecraft.server.level.ServerPlayer";
+    static final String CLS_ENTITY              = "net.minecraft.world.entity.Entity";
     static final String CLS_COMPONENT           = "net.minecraft.network.chat.Component";
     static final String CLS_MUTABLE_COMPONENT   = "net.minecraft.network.chat.MutableComponent";
     static final String CLS_TEXT_COMPONENT      = "net.minecraft.network.chat.TextComponent";
@@ -112,6 +114,8 @@ final class FabricReflectionConstants {
     static final String M_GET_PLAYER_LIST = im("net.minecraft.server.MinecraftServer", "getPlayerList", "()Lnet/minecraft/server/players/PlayerList;", "method_3760");
     static final String M_GET_PLAYERS     = im("net.minecraft.server.players.PlayerList", "getPlayers", "()Ljava/util/List;", "method_14571");
     static final String M_IS_ONLINE_MODE  = im("net.minecraft.server.MinecraftServer", "isOnlineMode", "()Z", "method_3828");
+    static final String M_GET_GAME_PROFILE = im("net.minecraft.world.entity.player.Player", "getGameProfile", "()Lcom/mojang/authlib/GameProfile;", "method_7334");
+    static final String M_IS_OP           = im("net.minecraft.server.players.PlayerList", "isOp", "(Lcom/mojang/authlib/GameProfile;)Z", "method_14569");
 
     // -- Component -------------------------------------------------------
     // Component.literal(String) — named only; resolved by signature scan on
@@ -140,6 +144,8 @@ final class FabricReflectionConstants {
         putM("getPlayerList", M_GET_PLAYER_LIST);
         putM("getPlayers", M_GET_PLAYERS);
         putM("isOnlineMode", M_IS_ONLINE_MODE);
+        putM("getGameProfile", M_GET_GAME_PROFILE);
+        putM("isOp", M_IS_OP);
         putM("literal", M_COMPONENT_LITERAL);
     }
 
@@ -163,6 +169,8 @@ final class FabricReflectionConstants {
         NAMED_TO_INTER.put("net.minecraft.server.MinecraftServer", "net.minecraft.server.MinecraftServer");
         NAMED_TO_INTER.put("net.minecraft.commands.CommandSourceStack", "net.minecraft.class_2168");
         NAMED_TO_INTER.put("net.minecraft.server.players.PlayerList", "net.minecraft.class_3324");
+        NAMED_TO_INTER.put("net.minecraft.server.level.ServerPlayer", "net.minecraft.class_3222");
+        NAMED_TO_INTER.put("net.minecraft.world.entity.Entity", "net.minecraft.class_1297");
         NAMED_TO_INTER.put("net.minecraft.network.chat.Component", "net.minecraft.class_2561");
         NAMED_TO_INTER.put("net.minecraft.network.chat.MutableComponent", "net.minecraft.class_5250");
         NAMED_TO_INTER.put("net.minecraft.network.chat.TextComponent", "net.minecraft.class_2585");
