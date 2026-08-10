@@ -99,7 +99,7 @@ public class NeoForgeCSF {
         // FastStats telemetry (dedicated server only, non-fatal).
         if (NeoForgeReflection.isDedicatedServer()) {
             try {
-                FastStatsCompat.create(ctx, NeoForgeReflection.getConfigDir(), "1.12.0",
+                FastStatsCompat.create(ctx, NeoForgeReflection.getConfigDir(), "2.0.0",
                         new NeoForgeFastStatsData(), "neoforge", FastStatsCompat.FASTSTATS_TOKEN)
                         .ready();
             } catch (Throwable t) {

@@ -44,7 +44,7 @@ public class FabricCSF implements DedicatedServerModInitializer {
 
         // FastStats telemetry (non-fatal).
         try {
-            FastStatsCompat.create(ctx, configDir, "1.12.0",
+            FastStatsCompat.create(ctx, configDir, "2.0.0",
                     new FabricFastStatsData(), "fabric", FastStatsCompat.FASTSTATS_TOKEN)
                     .ready();
         } catch (Throwable t) {
