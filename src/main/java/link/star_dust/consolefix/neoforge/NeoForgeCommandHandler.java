@@ -27,9 +27,7 @@ final class NeoForgeCommandHandler {
     void register(CommandDispatcher dispatcher) {
         Predicate requires = source -> {
             try {
-                Object r = NeoForgeReflection.callAny(source, "hasPermission",
-                        new Class<?>[]{int.class}, new Object[]{2});
-                return r instanceof Boolean && (Boolean) r;
+                return new NeoForgeCommandBridge(source).hasPermission("csf.admin");
             } catch (Throwable t) {
                 return false;
             }
