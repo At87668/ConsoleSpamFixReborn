@@ -380,6 +380,18 @@ final class ForgeReflection {
         }
     }
 
+    /** Whether the mod is running on a dedicated server (vs a client). */
+    static boolean isDedicatedServer() {
+        try {
+            Class<?> fmlLoader = forgeClass("net.minecraftforge.fml.loading.FMLLoader");
+            if (fmlLoader == null) return false;
+            Object dist = fmlLoader.getMethod("getDist").invoke(null);
+            return dist != null && "DEDICATED_SERVER".equals(dist.toString());
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
     /** Resolve {@code MinecraftForge.EVENT_BUS}. */
     static Object getMainEventBus() {
         try {
