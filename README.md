@@ -50,13 +50,11 @@ Requires **Java 17+** and Minecraft **1.18+** (all platforms). The Fabric/Forge/
 
 **Commands:**
 
-*/csf reload* - *csf.admin* - Reload the plugin config. (Bukkit)
+*/csf reload* - *csf.admin* - Reload the plugin config. (Bukkit / Fabric / Forge / NeoForge)
 
 */csfv reload* - *csf.admin* - Reload the plugin config. (Velocity)
 
 */csfb reload* - *csf.admin* - Reload the plugin config. (BungeeCord)
-
-*/csf reload* - *csf.admin* - Reload the plugin config. (Fabric / Forge / NeoForge)
 
 **Configuration example:**
 
