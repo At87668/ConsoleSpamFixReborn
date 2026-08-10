@@ -3,6 +3,9 @@ package link.star_dust.consolefix.fabric;
 import link.star_dust.consolefix.common.CommandBridge;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -52,11 +55,102 @@ final class FabricCommandBridge implements CommandBridge {
 
     @Override
     public boolean hasPermission(String node) {
-        // csf.admin defaults to op → permission level 2.
+        if (source == null) return false;
+        // 1) Try LuckPerms via fabric-permissions-api (reflection, isInstance-matched).
+        if (checkLPPermission(source, node, 2)) return true;
+        // 2) Fall back to vanilla op-level / operator check.
+        return checkVanillaOpLevel(source, 2);
+    }
+
+    // ── Permission checks ────────────────────────────────────────────
+    //
+    // Use Lucko's fabric-permissions-api (me.lucko.fabric.api.permissions.v0.Permissions)
+    // via reflection — its check() overloads reference Minecraft types not on our
+    // compile classpath. fabric-permissions-api is NOT bundled; LuckPerms ships its
+    // own copy at runtime. When LP is absent, we fall back to the vanilla op level.
+
+    /** Cached list of all Permissions.check() overloads matching signature (?, String, int). */
+    private static volatile List<Method> allCheckMethods;
+
+    private static List<Method> findAllCheckMethods() {
+        if (allCheckMethods != null) return allCheckMethods;
+        List<Method> result = new ArrayList<>();
         try {
-            Object r = FabricReflection.callAny(source, "hasPermission",
-                    new Class<?>[]{int.class}, new Object[]{2});
-            return r instanceof Boolean && (Boolean) r;
+            Class<?> permsCls = Class.forName("me.lucko.fabric.api.permissions.v0.Permissions");
+            for (Method m : permsCls.getMethods()) {
+                if (m.getName().equals("check") && m.getParameterCount() == 3) {
+                    Class<?>[] pts = m.getParameterTypes();
+                    if (pts[1] == String.class && (pts[2] == int.class || pts[2] == Integer.class)) {
+                        result.add(m);
+                    }
+                }
+            }
+        } catch (Throwable t) {
+            result = Collections.emptyList();
+        }
+        allCheckMethods = result;
+        return result;
+    }
+
+    /**
+     * Call {@code Permissions.check(source, node, defaultOpLevel)} via reflection,
+     * trying each cached overload until {@code param[0].isInstance(source)} matches.
+     */
+    private static boolean checkLPPermission(Object source, String node, int defaultOpLevel) {
+        for (Method m : findAllCheckMethods()) {
+            Class<?> sourceType = m.getParameterTypes()[0];
+            if (!sourceType.isInstance(source)) continue;
+            try {
+                Object result = m.invoke(null, source, node, defaultOpLevel);
+                return result instanceof Boolean && (Boolean) result;
+            } catch (Throwable t) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Vanilla op-level / operator check — the catch-all fallback. Console /
+     * non-player sources are always allowed.
+     */
+    private static boolean checkVanillaOpLevel(Object source, int minLevel) {
+        if (source == null) return false;
+        Object player = resolvePlayerEntity(source);
+        if (player == null) return true; // not a player → console → allowed
+        Object r = FabricReflection.callAny(source, "hasPermission",
+                new Class<?>[]{int.class}, new Object[]{minLevel});
+        if (r instanceof Boolean) return (Boolean) r;
+        return isPlayerOperator(player);
+    }
+
+    private static Object resolvePlayerEntity(Object source) {
+        if (source == null) return null;
+        try {
+            Object entity = FabricReflection.callAny(source, "getEntity",
+                    FabricReflectionConstants.NO_PARAMS, FabricReflectionConstants.NO_ARGS);
+            if (entity == null) return null;
+            Class<?> serverPlayer = FabricReflection.forName(FabricReflectionConstants.CLS_SERVER_PLAYER);
+            if (serverPlayer != null && serverPlayer.isInstance(entity)) return entity;
+            return null;
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+
+    private static boolean isPlayerOperator(Object player) {
+        try {
+            Object server = FabricReflection.getServer();
+            if (server == null) return false;
+            Object pm = FabricReflection.callAny(server, "getPlayerList",
+                    FabricReflectionConstants.NO_PARAMS, FabricReflectionConstants.NO_ARGS);
+            if (pm == null) return false;
+            Object profile = FabricReflection.callAny(player, "getGameProfile",
+                    FabricReflectionConstants.NO_PARAMS, FabricReflectionConstants.NO_ARGS);
+            if (profile == null) return false;
+            Object result = FabricReflection.callAny(pm, "isOp",
+                    new Class<?>[]{profile.getClass()}, new Object[]{profile});
+            return result instanceof Boolean && (Boolean) result;
         } catch (Throwable t) {
             return false;
         }
