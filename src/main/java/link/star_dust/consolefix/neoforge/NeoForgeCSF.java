@@ -1,0 +1,60 @@
+package link.star_dust.consolefix.neoforge;
+
+import link.star_dust.consolefix.common.CsfContext;
+import link.star_dust.consolefix.common.EngineInterface;
+import link.star_dust.consolefix.core.ConfigStore;
+import link.star_dust.consolefix.core.LogFilterManager;
+import link.star_dust.consolefix.core.NewEngine;
+
+import java.nio.file.Path;
+
+/**
+ * NeoForge entry point. The {@code @Mod} annotation is provided by a
+ * compile-time stub (same FQN as the real NeoForge annotation) so no
+ * NeoForge JAR is needed at compile time; at runtime the server provides
+ * the real class.
+ */
+@net.neoforged.fml.common.Mod("consolespamfixreborn")
+public class NeoForgeCSF {
+
+    public NeoForgeCSF() {
+        Path configFile = NeoForgeReflection.getConfigDir().resolve("ConsoleSpamFixReborn.yml");
+
+        ConfigStore configStore = new ConfigStore(configFile, "config.yml");
+        configStore.load();
+
+        CsfContext ctx = new NeoForgeCsfContext(configStore);
+        EngineInterface engine = new NewEngine(ctx);
+        LogFilterManager filterManager = new LogFilterManager(ctx, engine);
+
+        // Attach the filter (single mechanism, also used on reload).
+        filterManager.updateFilter();
+
+        NeoForgeCommandHandler commandHandler = new NeoForgeCommandHandler(ctx, filterManager);
+
+        Object eventBus = NeoForgeReflection.getMainEventBus();
+        if (eventBus != null) {
+            // RegisterCommandsEvent fires during server construction — register early.
+            Class<?> eventClass = NeoForgeReflection.forgeClass(
+                    "net.neoforged.neoforge.event.RegisterCommandsEvent");
+            if (eventClass == null) {
+                // NeoForge 1.20.1 used the net.minecraftforge package.
+                eventClass = NeoForgeReflection.forgeClass(
+                        "net.minecraftforge.event.RegisterCommandsEvent");
+            }
+            final Class<?> resolvedEvent = eventClass;
+            if (resolvedEvent != null) {
+                NeoForgeReflection.registerEventListener(eventBus, resolvedEvent,
+                        event -> {
+                            Object dispatcher = NeoForgeReflection.callAny(event, "getDispatcher",
+                                    NeoForgeReflectionConstants.NO_PARAMS, NeoForgeReflectionConstants.NO_ARGS);
+                            if (dispatcher != null) {
+                                commandHandler.register((com.mojang.brigadier.CommandDispatcher<?>) dispatcher);
+                            }
+                        });
+            }
+        }
+
+        ctx.info("ConsoleSpamFixReborn (NeoForge) enabled.");
+    }
+}
