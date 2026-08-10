@@ -6,12 +6,11 @@ import link.star_dust.consolefix.core.LogFilterManager;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
-import java.util.function.Predicate;
-
 /**
- * Registers the {@code /csf reload} brigadier command and executes it.
- * The command source ({@code CommandSourceStack}) is held as {@code Object}
- * and permission checks go through {@link NeoForgeReflection}.
+ * Registers the server-side {@code /csf reload} and client-side
+ * {@code /csfc reload} brigadier commands. The command source
+ * ({@code CommandSourceStack}) is held as {@code Object} and permission
+ * checks go through {@link NeoForgeReflection}.
  */
 final class NeoForgeCommandHandler {
 
@@ -23,20 +22,32 @@ final class NeoForgeCommandHandler {
         this.filterManager = filterManager;
     }
 
+    /** Server-side registration (with permission check). */
     @SuppressWarnings({"rawtypes", "unchecked"})
     void register(CommandDispatcher dispatcher) {
-        Predicate requires = source -> {
-            try {
-                return new NeoForgeCommandBridge(source).hasPermission("csf.admin");
-            } catch (Throwable t) {
-                return false;
-            }
-        };
+        register(dispatcher, "csf", true);
+    }
 
-        LiteralArgumentBuilder csf = LiteralArgumentBuilder.literal("csf");
-        csf.requires(requires);
-        csf.executes(ctxCmd -> {
-            new NeoForgeCommandBridge(ctxCmd.getSource()).sendMessage("Reload Config: /csf reload");
+    /** Client-side registration (no permission check needed). */
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    void registerClient(CommandDispatcher dispatcher) {
+        register(dispatcher, "csfc", false);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private void register(CommandDispatcher dispatcher, String name, boolean checkPermission) {
+        LiteralArgumentBuilder node = LiteralArgumentBuilder.literal(name);
+        if (checkPermission) {
+            node.requires(source -> {
+                try {
+                    return new NeoForgeCommandBridge(source).hasPermission("csf.admin");
+                } catch (Throwable t) {
+                    return false;
+                }
+            });
+        }
+        node.executes(ctxCmd -> {
+            new NeoForgeCommandBridge(ctxCmd.getSource()).sendMessage("Reload Config: /" + name + " reload");
             return 1;
         });
 
@@ -50,7 +61,7 @@ final class NeoForgeCommandHandler {
             return 1;
         });
 
-        csf.then(reload);
-        dispatcher.register(csf);
+        node.then(reload);
+        dispatcher.register(node);
     }
 }
