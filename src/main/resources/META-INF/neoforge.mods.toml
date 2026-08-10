@@ -1,11 +1,9 @@
 modLoader = "javafml"
 loaderVersion = "[2,)"
-license = "GPL-3.0"
 
 [[mods]]
 modId = "consolespamfixreborn"
-version = "1.12.0"
+version = "${version}"
 displayName = "ConsoleSpamFixReborn"
 description = "Stop the console spam errors."
-authors = "Author87668, CraftersLand"
-contributors = "VRXDev2, MarvinSur"
+authors = "Author87668"
