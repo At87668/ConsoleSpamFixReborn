@@ -33,6 +33,9 @@ public class NeoForgeCSF {
 
         NeoForgeCommandHandler commandHandler = new NeoForgeCommandHandler(ctx, filterManager);
 
+        // Register the csf.admin permission node (fires during server construction).
+        NeoForgePermissionRegistry.registerGatherListener();
+
         Object eventBus = NeoForgeReflection.getMainEventBus();
         if (eventBus != null) {
             // Cache the server for telemetry once it starts.
