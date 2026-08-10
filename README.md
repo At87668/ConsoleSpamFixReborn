@@ -48,6 +48,8 @@ Requires **Java 17+** and Minecraft **1.18+** (all platforms). The Fabric/Forge/
 
 *csf.admin* - Allow the use of config reload command. Default to OP.
 
+On the Fabric / Forge / NeoForge platforms the `csf.admin` permission node is registered with the server's permission system, so permission plugins (e.g. LuckPerms) can grant it to individual players. When no permission plugin is installed the node falls back to the vanilla operator status.
+
 **Commands:**
 
 */csf reload* - *csf.admin* - Reload the plugin config. (Bukkit / Fabric / Forge / NeoForge)
