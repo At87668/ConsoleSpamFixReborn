@@ -32,6 +32,9 @@ public class ForgeCSF {
 
         ForgeCommandHandler commandHandler = new ForgeCommandHandler(ctx, filterManager);
 
+        // Register the csf.admin permission node (fires during server construction).
+        ForgePermissionRegistry.registerGatherListener();
+
         Object eventBus = ForgeReflection.getMainEventBus();
         if (eventBus != null) {
             // Cache the server for telemetry once it starts.
