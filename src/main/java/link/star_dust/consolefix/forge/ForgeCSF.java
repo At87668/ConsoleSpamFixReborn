@@ -2,6 +2,7 @@ package link.star_dust.consolefix.forge;
 
 import link.star_dust.consolefix.common.CsfContext;
 import link.star_dust.consolefix.common.EngineInterface;
+import link.star_dust.consolefix.common.FastStatsCompat;
 import link.star_dust.consolefix.core.ConfigStore;
 import link.star_dust.consolefix.core.LogFilterManager;
 import link.star_dust.consolefix.core.NewEngine;
@@ -33,6 +34,15 @@ public class ForgeCSF {
 
         Object eventBus = ForgeReflection.getMainEventBus();
         if (eventBus != null) {
+            // Cache the server for telemetry once it starts.
+            ForgeReflection.registerEventListener(eventBus,
+                    ForgeReflection.forgeClass("net.minecraftforge.event.server.ServerStartingEvent"),
+                    event -> {
+                        Object server = ForgeReflection.callAny(event, "getServer",
+                                ForgeReflectionConstants.NO_PARAMS, ForgeReflectionConstants.NO_ARGS);
+                        if (server != null) ForgeReflection.setCachedServer(server);
+                    });
+
             // RegisterCommandsEvent fires during server construction — register early.
             ForgeReflection.registerEventListener(eventBus,
                     ForgeReflection.forgeClass("net.minecraftforge.event.RegisterCommandsEvent"),
@@ -43,6 +53,15 @@ public class ForgeCSF {
                             commandHandler.register((com.mojang.brigadier.CommandDispatcher<?>) dispatcher);
                         }
                     });
+        }
+
+        // FastStats telemetry (non-fatal).
+        try {
+            FastStatsCompat.create(ctx, ForgeReflection.getConfigDir(), "1.12.0",
+                    new ForgeFastStatsData(), "forge", FastStatsCompat.FASTSTATS_TOKEN)
+                    .ready();
+        } catch (Throwable t) {
+            ctx.warn("Failed to initialise FastStats metrics: " + t.getMessage());
         }
 
         ctx.info("ConsoleSpamFixReborn (Forge) enabled.");
