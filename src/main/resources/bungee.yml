@@ -7,7 +7,7 @@ website: https://www.spigotmc.org/resources/121703/
 load: STARTUP
 description: Stop the console spam errors.
 commands:
-    csf:
+    csfb:
         description: The main command.
 permissions:
     csf.admin:
