@@ -109,3 +109,7 @@ This plugin hides **only the messages/errors you add to the config file!**
 
 [![bungee](https://bstats.org/signatures/bungeecord/ConsoleSpamFixReborn.svg)](https://bstats.org/plugin/bungeecord/ConsoleSpamFixReborn/25292)
 
+#### FastStats (Fabric / Forge / NeoForge)
+
+Telemetry for the mod platforms is collected by [FastStats](https://faststats.dev). It is opt-out: the first run prints a notice and submission is deferred until the next restart, and the opt-out flag lives in `faststats/config.properties` inside the mod config folder.
+
