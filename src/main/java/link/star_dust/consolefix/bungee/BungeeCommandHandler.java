@@ -5,13 +5,11 @@ import net.md_5.bungee.api.plugin.Command;
 
 public class BungeeCommandHandler extends Command {
     private final ConfigHandler configHandler;
-    private final EngineInterface engine;
     private final BungeeCSF plugin;
 
-    public BungeeCommandHandler(ConfigHandler configHandler, EngineInterface engine, BungeeCSF plugin) {
+    public BungeeCommandHandler(ConfigHandler configHandler, BungeeCSF plugin) {
         super("csfb");
         this.configHandler = configHandler;
-        this.engine = engine;
         this.plugin = plugin;
     }
 
