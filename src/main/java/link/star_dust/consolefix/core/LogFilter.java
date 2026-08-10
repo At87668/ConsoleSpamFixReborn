@@ -103,7 +103,6 @@ public class LogFilter implements Filter {
         return false;
     }
 
-    @Override
     public boolean stop(long timeout, TimeUnit timeUnit) {
         return false;
     }
@@ -183,21 +182,6 @@ public class LogFilter implements Filter {
 
     @Override
     public Filter.Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4, Object p5, Object p6, Object p7, Object p8, Object p9) {
-        return this.checkMessage(message);
-    }
-
-    @Override
-    public Filter.Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4, Object p5, Object p6, Object p7, Object p8, Object p9, Object p10) {
-        return this.checkMessage(message);
-    }
-
-    @Override
-    public Filter.Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4, Object p5, Object p6, Object p7, Object p8, Object p9, Object p10, Object p11) {
-        return this.checkMessage(message);
-    }
-
-    @Override
-    public Filter.Result filter(Logger logger, Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4, Object p5, Object p6, Object p7, Object p8, Object p9, Object p10, Object p11, Object p12) {
         return this.checkMessage(message);
     }
 
