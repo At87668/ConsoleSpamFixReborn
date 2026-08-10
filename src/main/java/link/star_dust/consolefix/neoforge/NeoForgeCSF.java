@@ -2,6 +2,7 @@ package link.star_dust.consolefix.neoforge;
 
 import link.star_dust.consolefix.common.CsfContext;
 import link.star_dust.consolefix.common.EngineInterface;
+import link.star_dust.consolefix.common.FastStatsCompat;
 import link.star_dust.consolefix.core.ConfigStore;
 import link.star_dust.consolefix.core.LogFilterManager;
 import link.star_dust.consolefix.core.NewEngine;
@@ -34,6 +35,23 @@ public class NeoForgeCSF {
 
         Object eventBus = NeoForgeReflection.getMainEventBus();
         if (eventBus != null) {
+            // Cache the server for telemetry once it starts.
+            Class<?> serverStarting = NeoForgeReflection.forgeClass(
+                    "net.neoforged.neoforge.event.server.ServerStartingEvent");
+            if (serverStarting == null) {
+                serverStarting = NeoForgeReflection.forgeClass(
+                        "net.minecraftforge.event.server.ServerStartingEvent");
+            }
+            final Class<?> startingEvent = serverStarting;
+            if (startingEvent != null) {
+                NeoForgeReflection.registerEventListener(eventBus, startingEvent,
+                        event -> {
+                            Object server = NeoForgeReflection.callAny(event, "getServer",
+                                    NeoForgeReflectionConstants.NO_PARAMS, NeoForgeReflectionConstants.NO_ARGS);
+                            if (server != null) NeoForgeReflection.setCachedServer(server);
+                        });
+            }
+
             // RegisterCommandsEvent fires during server construction — register early.
             Class<?> eventClass = NeoForgeReflection.forgeClass(
                     "net.neoforged.neoforge.event.RegisterCommandsEvent");
@@ -53,6 +71,15 @@ public class NeoForgeCSF {
                             }
                         });
             }
+        }
+
+        // FastStats telemetry (non-fatal).
+        try {
+            FastStatsCompat.create(ctx, NeoForgeReflection.getConfigDir(), "1.12.0",
+                    new NeoForgeFastStatsData(), "neoforge", FastStatsCompat.FASTSTATS_TOKEN)
+                    .ready();
+        } catch (Throwable t) {
+            ctx.warn("Failed to initialise FastStats metrics: " + t.getMessage());
         }
 
         ctx.info("ConsoleSpamFixReborn (NeoForge) enabled.");
