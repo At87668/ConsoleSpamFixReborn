@@ -74,15 +74,37 @@ public class NeoForgeCSF {
                             }
                         });
             }
+
+            // RegisterClientCommandsEvent fires on the client — register /csfc.
+            Class<?> clientCmd = NeoForgeReflection.forgeClass(
+                    "net.neoforged.neoforge.event.RegisterClientCommandsEvent");
+            if (clientCmd == null) {
+                // NeoForge 1.20.1 used the net.minecraftforge package.
+                clientCmd = NeoForgeReflection.forgeClass(
+                        "net.minecraftforge.event.RegisterClientCommandsEvent");
+            }
+            final Class<?> resolvedClientCmd = clientCmd;
+            if (resolvedClientCmd != null) {
+                NeoForgeReflection.registerEventListener(eventBus, resolvedClientCmd,
+                        event -> {
+                            Object dispatcher = NeoForgeReflection.callAny(event, "getDispatcher",
+                                    NeoForgeReflectionConstants.NO_PARAMS, NeoForgeReflectionConstants.NO_ARGS);
+                            if (dispatcher != null) {
+                                commandHandler.registerClient((com.mojang.brigadier.CommandDispatcher<?>) dispatcher);
+                            }
+                        });
+            }
         }
 
-        // FastStats telemetry (non-fatal).
-        try {
-            FastStatsCompat.create(ctx, NeoForgeReflection.getConfigDir(), "1.12.0",
-                    new NeoForgeFastStatsData(), "neoforge", FastStatsCompat.FASTSTATS_TOKEN)
-                    .ready();
-        } catch (Throwable t) {
-            ctx.warn("Failed to initialise FastStats metrics: " + t.getMessage());
+        // FastStats telemetry (dedicated server only, non-fatal).
+        if (NeoForgeReflection.isDedicatedServer()) {
+            try {
+                FastStatsCompat.create(ctx, NeoForgeReflection.getConfigDir(), "1.12.0",
+                        new NeoForgeFastStatsData(), "neoforge", FastStatsCompat.FASTSTATS_TOKEN)
+                        .ready();
+            } catch (Throwable t) {
+                ctx.warn("Failed to initialise FastStats metrics: " + t.getMessage());
+            }
         }
 
         ctx.info("ConsoleSpamFixReborn (NeoForge) enabled.");
