@@ -21,3 +21,7 @@ Updates.md
 txt-out/
 batch_convert_to_txt.py
 txt_integrater.py
+*.lnk
+
+# Test
+TestEnv
