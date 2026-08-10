@@ -25,6 +25,18 @@ final class NeoForgeReflection {
 
     static boolean DEBUG_REFLECTION = false;
 
+    private static volatile Object cachedServer;
+
+    /** Cache the dedicated-server instance resolved during lifecycle init. */
+    static void setCachedServer(Object server) {
+        cachedServer = server;
+    }
+
+    /** Return the cached server instance (may be null before server start). */
+    static Object getServer() {
+        return cachedServer;
+    }
+
     private static void log(String msg) {
         System.out.println("[ConsoleSpamFixReborn:NeoForgeReflection] " + msg);
     }
