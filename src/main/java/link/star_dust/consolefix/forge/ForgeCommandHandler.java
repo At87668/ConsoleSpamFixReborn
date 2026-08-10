@@ -27,9 +27,7 @@ final class ForgeCommandHandler {
     void register(CommandDispatcher dispatcher) {
         Predicate requires = source -> {
             try {
-                Object r = ForgeReflection.callAny(source, "hasPermission",
-                        new Class<?>[]{int.class}, new Object[]{2});
-                return r instanceof Boolean && (Boolean) r;
+                return new ForgeCommandBridge(source).hasPermission("csf.admin");
             } catch (Throwable t) {
                 return false;
             }
