@@ -8,12 +8,13 @@ import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.config.Configuration;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
-import org.spongepowered.configurate.serialize.SerializationException;
+
+import link.star_dust.consolefix.common.CsfContext;
+import link.star_dust.consolefix.common.EngineInterface;
+import link.star_dust.consolefix.core.LogFilterManager;
+import link.star_dust.consolefix.core.NewEngine;
 
 import java.nio.file.Path;
 
@@ -25,11 +26,10 @@ public class VelocityCSF {
     private final ProxyServer server;
     private final Path dataDirectory;
     private final PluginContainer pluginContainer;
-    private LogFilter logFilter;
-    private final LogFilterManager logFilterManager;
-
     private ConfigHandler configHandler;
+    private CsfContext csfContext;
     private EngineInterface engine;
+    private LogFilterManager logFilterManager;
     private Metrics metrics;
     private final Metrics.Factory metricsFactory;
 
@@ -40,43 +40,41 @@ public class VelocityCSF {
         this.dataDirectory = dataDirectory;
         this.pluginContainer = pluginContainer;
         this.metricsFactory = metricsFactory;
-        LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
-        Configuration config = loggerContext.getConfiguration();
-        this.logFilterManager = new LogFilterManager(this);
     }
     
     public void updateLogFilter() {
-        if (this.engine == null || this.configHandler == null) {
-            logger.error("Cannot update log filter: Engine or ConfigHandler is not initialized yet!");
+        if (this.engine == null || this.logFilterManager == null) {
+            logger.error("Cannot update log filter: Engine or LogFilterManager is not initialized yet!");
             return;
         }
 
-        this.engine.hideConsoleMessages();
+        this.logFilterManager.updateFilter();
     }
 
     @Subscribe
-    public void onProxyInitialize(ProxyInitializeEvent event) throws SerializationException {
-        // Initialize the configuration handler
+    public void onProxyInitialize(ProxyInitializeEvent event) {
+        // Initialise the config handler.
         this.configHandler = new ConfigHandler(this);
         if (!this.configHandler.loadConfig()) {
             logger.error("Failed to load configuration. The plugin may not function correctly.");
         }
 
-        // Initialize the engine and log filter
-        this.engine = new NewEngine(this);
-        this.engine.hideConsoleMessages(); // Ensure logFilter is initialized here
+        // Initialise the platform-agnostic core.
+        this.csfContext = new VelocityCsfContext(this, configHandler);
+        this.engine = new NewEngine(csfContext);
+        this.logFilterManager = new LogFilterManager(csfContext, engine);
 
-        // Initialize bStats metrics
+        // Initialise bStats metrics.
         int pluginId = 25291;
         metricsFactory.make(this, pluginId);
 
-        // Register the command after ensuring logFilter is initialized
-        this.server.getCommandManager().register("csfv", new VelocityCommandHandler(this.configHandler, this.engine, this, this.logFilter, this.logFilterManager));
+        // Register the command.
+        this.server.getCommandManager().register("csfv", new VelocityCommandHandler(this, this.logFilterManager));
 
-        // Update log filter
+        // Update the log filter.
         updateLogFilter();
 
-        // Log successful initialization
+        // Log successful initialization.
         logger.info("{} v{} loaded successfully!", PLUGIN_NAME, pluginContainer.getDescription().getVersion().orElse("Unknown"));
     }
 
@@ -86,6 +84,14 @@ public class VelocityCSF {
 
     public EngineInterface getEngine() {
         return engine;
+    }
+
+    public LogFilterManager getLogFilterManager() {
+        return logFilterManager;
+    }
+
+    public CsfContext getCsfContext() {
+        return csfContext;
     }
 
     public Logger getLogger() {
