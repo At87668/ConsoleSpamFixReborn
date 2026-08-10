@@ -17,6 +17,17 @@ final class FabricEventBus {
     private FabricEventBus() {}
 
     /**
+     * Register a {@code SERVER_STARTED} lifecycle listener (used to cache the
+     * {@code MinecraftServer} instance for telemetry).
+     */
+    static void registerServerStarted(Consumer<Object> handler) {
+        register("net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents",
+                "SERVER_STARTED",
+                "net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents$ServerStarted",
+                fromConsumer(handler));
+    }
+
+    /**
      * Register a command registration callback. Supports v2 (1.19+) with
      * v1 (1.18.x) fallback.
      */
@@ -120,5 +131,63 @@ final class FabricEventBus {
             }
         }
         return found;
+    }
+
+    // ── Generic lifecycle registration ────────────────────────────────
+
+    /**
+     * Build a dynamic proxy implementing the listener interface and register it
+     * with the event. The listener interface FQN is explicit because
+     * {@code Event<T>} erases {@code T} at runtime.
+     */
+    private static void register(String eventClassName, String fieldName,
+                                 String listenerInterfaceName, CallbackAdapter handler) {
+        try {
+            Class<?> eventCls = FabricReflection.forName(eventClassName);
+            if (eventCls == null) return;
+            java.lang.reflect.Field eventField = eventCls.getField(fieldName);
+            Object event = eventField.get(null);
+
+            java.lang.reflect.Method registerMethod;
+            Class<?> eventIface = FabricReflection.forName("net.fabricmc.fabric.api.event.Event");
+            if (eventIface != null) {
+                registerMethod = eventIface.getMethod("register", Object.class);
+            } else {
+                registerMethod = event.getClass().getMethod("register", Object.class);
+            }
+            Class<?> listenerInterface = FabricReflection.forName(listenerInterfaceName);
+            if (listenerInterface == null) return;
+
+            final Method abstractMethod = findAbstractMethod(listenerInterface);
+            if (abstractMethod == null) return;
+            final int expectedParamCount = abstractMethod.getParameterCount();
+            Object proxy = Proxy.newProxyInstance(
+                    eventCls.getClassLoader(),
+                    new Class<?>[]{listenerInterface},
+                    (proxyObj, method, args) -> {
+                        if (!method.equals(abstractMethod)) {
+                            return handleObjectMethods(proxyObj, method, args);
+                        }
+                        if (args == null) args = new Object[0];
+                        if (args.length != expectedParamCount) return null;
+                        return handler.handle(args);
+                    });
+            registerMethod.invoke(event, proxy);
+        } catch (Throwable t) {
+            // Best-effort; mod continues with reduced functionality.
+        }
+    }
+
+    @FunctionalInterface
+    interface CallbackAdapter {
+        Object handle(Object[] args);
+    }
+
+    /** Adapter that wraps a {@code Consumer<Object>}. */
+    private static CallbackAdapter fromConsumer(Consumer<Object> c) {
+        return args -> {
+            c.accept(args[0]);
+            return null;
+        };
     }
 }
