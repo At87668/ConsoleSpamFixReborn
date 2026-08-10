@@ -56,15 +56,28 @@ public class ForgeCSF {
                             commandHandler.register((com.mojang.brigadier.CommandDispatcher<?>) dispatcher);
                         }
                     });
+
+            // RegisterClientCommandsEvent fires on the client — register /csfc.
+            ForgeReflection.registerEventListener(eventBus,
+                    ForgeReflection.forgeClass("net.minecraftforge.event.RegisterClientCommandsEvent"),
+                    event -> {
+                        Object dispatcher = ForgeReflection.callAny(event, "getDispatcher",
+                                ForgeReflectionConstants.NO_PARAMS, ForgeReflectionConstants.NO_ARGS);
+                        if (dispatcher != null) {
+                            commandHandler.registerClient((com.mojang.brigadier.CommandDispatcher<?>) dispatcher);
+                        }
+                    });
         }
 
-        // FastStats telemetry (non-fatal).
-        try {
-            FastStatsCompat.create(ctx, ForgeReflection.getConfigDir(), "1.12.0",
-                    new ForgeFastStatsData(), "forge", FastStatsCompat.FASTSTATS_TOKEN)
-                    .ready();
-        } catch (Throwable t) {
-            ctx.warn("Failed to initialise FastStats metrics: " + t.getMessage());
+        // FastStats telemetry (dedicated server only, non-fatal).
+        if (ForgeReflection.isDedicatedServer()) {
+            try {
+                FastStatsCompat.create(ctx, ForgeReflection.getConfigDir(), "1.12.0",
+                        new ForgeFastStatsData(), "forge", FastStatsCompat.FASTSTATS_TOKEN)
+                        .ready();
+            } catch (Throwable t) {
+                ctx.warn("Failed to initialise FastStats metrics: " + t.getMessage());
+            }
         }
 
         ctx.info("ConsoleSpamFixReborn (Forge) enabled.");
