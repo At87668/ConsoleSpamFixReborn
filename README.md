@@ -2,7 +2,9 @@
 
 
 
-A bukkit/folia/velocity/bungeecord utility plugin that allows you to hide desired messages or errors that appear on server console and logs. The messages or errors are only hidden and not fixed! Useful if you want to hide errors or messages that spam the server console and get huge sized server logs. This plugin was made to stop console spam when you can't have the issue fixed, to prevent other issues because of intense console spam and unreadable console logs. It's very useful on modded servers where some mods can cause a lot of console spam. `This does not hide all errors! Only the ones you configure to be hidden!`
+A bukkit/folia/velocity/bungeecord/fabric/forge/neoforge utility plugin that allows you to hide desired messages or errors that appear on server console and logs. The messages or errors are only hidden and not fixed! Useful if you want to hide errors or messages that spam the server console and get huge sized server logs. This plugin was made to stop console spam when you can't have the issue fixed, to prevent other issues because of intense console spam and unreadable console logs. It's very useful on modded servers where some mods can cause a lot of console spam. `This does not hide all errors! Only the ones you configure to be hidden!`
+
+Requires **Java 17+** and Minecraft **1.18+** (all platforms). The Fabric/Forge/NeoForge variants run on the dedicated server and filter the same log4j console output.
 
 ***Note!** On modded servers some errors my not be hidden by this plugin due the fact that mods run on forge and some console messages are sent outside the main server thread. If you have messages that this plugin can't hide please post them on the Discussion page.*
 
@@ -25,7 +27,7 @@ A bukkit/folia/velocity/bungeecord utility plugin that allows you to hide desire
 
 **Features**
 
-- The plugin should work fine on any bukkit/spigot server no mater the version. It works on Arclight modded servers too.
+- Works on any Bukkit/Spigot/Paper/Folia server, BungeeCord, Velocity, and as a Fabric / Forge / NeoForge server-side mod (1.18+).
 - Hides configured messages from appearing on server console and logs.
 - Easy to configure. Check the plugin config file.
 - Reload command to apply the config changes without a server restart.
@@ -34,9 +36,10 @@ A bukkit/folia/velocity/bungeecord utility plugin that allows you to hide desire
 
 **Install instructions**
 
-- Place the plugin in the server plugins folder.
+- Bukkit/Spigot/Paper/Folia, BungeeCord, Velocity: place the jar in the server `plugins/` folder.
+- Fabric / Forge / NeoForge: place the jar in the server `mods/` folder.
 - Start the server and the config file will be generated on the first run.
-- Change the config settings anytime and run the command /csf reload to apply the changes.
+- Change the config settings anytime and run the reload command to apply the changes.
 - Done, enjoy.
 
 
@@ -52,6 +55,8 @@ A bukkit/folia/velocity/bungeecord utility plugin that allows you to hide desire
 */csfv reload* - *csf.admin* - Reload the plugin config. (Velocity)
 
 */csfb reload* - *csf.admin* - Reload the plugin config. (BungeeCord)
+
+*/csfm reload* - *csf.admin* - Reload the plugin config. (Fabric / Forge / NeoForge)
 
 **Configuration example:**
 
