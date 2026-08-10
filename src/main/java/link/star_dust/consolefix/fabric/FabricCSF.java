@@ -2,6 +2,7 @@ package link.star_dust.consolefix.fabric;
 
 import link.star_dust.consolefix.common.CsfContext;
 import link.star_dust.consolefix.common.EngineInterface;
+import link.star_dust.consolefix.common.FastStatsCompat;
 import link.star_dust.consolefix.core.ConfigStore;
 import link.star_dust.consolefix.core.LogFilterManager;
 import link.star_dust.consolefix.core.NewEngine;
@@ -33,10 +34,22 @@ public class FabricCSF implements DedicatedServerModInitializer {
         // Attach the filter (single mechanism, also used on reload).
         filterManager.updateFilter();
 
-        // Register /csf reload via a dynamic-proxy CommandRegistrationCallback.
+        // Register /csfm reload via a dynamic-proxy CommandRegistrationCallback.
         FabricEventBus.registerCommandRegistration(dispatcherObj ->
                 new FabricCommandHandler(ctx, filterManager)
                         .register((com.mojang.brigadier.CommandDispatcher<?>) dispatcherObj));
+
+        // Cache the server once it starts (needed for telemetry).
+        FabricEventBus.registerServerStarted(FabricReflection::setCachedServer);
+
+        // FastStats telemetry (non-fatal).
+        try {
+            FastStatsCompat.create(ctx, configDir, "1.12.0",
+                    new FabricFastStatsData(), "fabric", FastStatsCompat.FASTSTATS_TOKEN)
+                    .ready();
+        } catch (Throwable t) {
+            ctx.warn("Failed to initialise FastStats metrics: " + t.getMessage());
+        }
 
         ctx.info("ConsoleSpamFixReborn (Fabric) enabled.");
     }
