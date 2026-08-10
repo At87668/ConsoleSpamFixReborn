@@ -28,6 +28,7 @@ Requires **Java 17+** and Minecraft **1.18+** (all platforms). The Fabric/Forge/
 **Features**
 
 - Works on any Bukkit/Spigot/Paper/Folia server, BungeeCord, Velocity, and as a Fabric / Forge / NeoForge server-side mod (1.18+).
+- Client-side support on Fabric / Forge / NeoForge: hides configured messages from the client console and latest.log, reloadable with /csfc.
 - Hides configured messages from appearing on server console and logs.
 - Easy to configure. Check the plugin config file.
 - Reload command to apply the config changes without a server restart.
@@ -53,6 +54,8 @@ On the Fabric / Forge / NeoForge platforms the `csf.admin` permission node is re
 **Commands:**
 
 */csf reload* - *csf.admin* - Reload the plugin config. (Bukkit / Fabric / Forge / NeoForge)
+
+*/csfc reload* - Reload the client config. (Fabric / Forge / NeoForge client)
 
 */csfv reload* - *csf.admin* - Reload the plugin config. (Velocity)
 
