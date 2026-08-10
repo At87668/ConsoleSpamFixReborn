@@ -28,6 +28,44 @@ final class FabricEventBus {
     }
 
     /**
+     * Register a client command registration callback
+     * (fabric-client-command-api-v2). The handler receives the raw
+     * {@code CommandDispatcher} as {@code Object}.
+     */
+    static void registerClientCommandRegistration(Consumer<Object> handler) {
+        try {
+            Class<?> callbackCls = FabricReflection.forName(
+                    "net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback");
+            if (callbackCls == null) return;
+
+            java.lang.reflect.Field eventField = callbackCls.getField("EVENT");
+            Object event = eventField.get(null);
+
+            java.lang.reflect.Method abstractMethod = findAbstractMethod(callbackCls);
+            if (abstractMethod == null) return;
+
+            Class<?> eventIface = FabricReflection.forName("net.fabricmc.fabric.api.event.Event");
+            java.lang.reflect.Method registerMethod = eventIface != null
+                    ? eventIface.getMethod("register", Object.class)
+                    : event.getClass().getMethod("register", Object.class);
+
+            Object proxy = Proxy.newProxyInstance(
+                    callbackCls.getClassLoader(),
+                    new Class<?>[]{callbackCls},
+                    (proxyObj, method, args) -> {
+                        if (!method.equals(abstractMethod)) return handleObjectMethods(proxyObj, method, args);
+                        // args[0] is the CommandDispatcher
+                        handler.accept(args[0]);
+                        return null;
+                    });
+
+            registerMethod.invoke(event, proxy);
+        } catch (Throwable t) {
+            // Client commands unavailable; mod continues without them.
+        }
+    }
+
+    /**
      * Register a command registration callback. Supports v2 (1.19+) with
      * v1 (1.18.x) fallback.
      */
