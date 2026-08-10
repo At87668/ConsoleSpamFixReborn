@@ -381,6 +381,18 @@ final class NeoForgeReflection {
         }
     }
 
+    /** Whether the mod is running on a dedicated server (vs a client). */
+    static boolean isDedicatedServer() {
+        try {
+            Class<?> fmlLoader = forgeClass("net.neoforged.fml.loading.FMLLoader");
+            if (fmlLoader == null) return false;
+            Object dist = fmlLoader.getMethod("getDist").invoke(null);
+            return dist != null && "DEDICATED_SERVER".equals(dist.toString());
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
     /**
      * Resolve the NeoForge main event bus: {@code NeoForge.EVENT_BUS}
      * (1.20.2+), falling back to {@code MinecraftForge.EVENT_BUS} (1.20.1).
