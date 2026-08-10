@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "consolespamfixreborn",
+  "version": "1.12.0",
+  "name": "ConsoleSpamFixReborn",
+  "description": "Stop the console spam errors.",
+  "authors": ["Author87668", "CraftersLand"],
+  "contributors": ["VRXDev2", "MarvinSur"],
+  "license": "GPL-3.0",
+  "environment": "*",
+  "entrypoints": {
+    "server": [
+      "link.star_dust.consolefix.fabric.FabricCSF"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.14.0",
+    "fabric-api": "*",
+    "java": ">=17"
+  }
+}
