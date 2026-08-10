@@ -60,8 +60,12 @@ public class ConfigStore {
      */
     public List<String> getStringList(String path) {
         if (node == null) return Collections.emptyList();
-        List<String> list = node.node((Object[]) path.split("\\.")).getList(String.class);
-        return list == null ? Collections.emptyList() : list;
+        try {
+            List<String> list = node.node((Object[]) path.split("\\.")).getList(String.class);
+            return list == null ? Collections.emptyList() : list;
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
     }
 
     /**
@@ -69,7 +73,11 @@ public class ConfigStore {
      */
     public String getString(String path) {
         if (node == null) return null;
-        return node.node((Object[]) path.split("\\.")).getString();
+        try {
+            return node.node((Object[]) path.split("\\.")).getString();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**
