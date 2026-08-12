@@ -19,6 +19,8 @@ public class ConfigHandler {
     private final PluginContainer pluginContainer;
     private CommentedConfigurationNode configNode;
     private ConfigurationLoader<CommentedConfigurationNode> loader;
+    private boolean logFilteredMessages;
+    private PrintWriter filteredLogWriter;
 
     public ConfigHandler(VelocityCSF velocityCSF) {
         this.logger = velocityCSF.getLogger();
@@ -48,6 +50,17 @@ public class ConfigHandler {
         try {
             logger.info("Loading the config file...");
             configNode = loader.load();
+            this.logFilteredMessages = configNode.node("Log-Filtered-Messages").getBoolean(false);
+            if (this.logFilteredMessages && this.filteredLogWriter == null) {
+                try {
+                    File logDir = new File("logs");
+                    if (!logDir.exists()) logDir.mkdirs();
+                    this.filteredLogWriter = new PrintWriter(new FileWriter(new File(logDir, "filtered.log"), true));
+                    logger.info("Filtered message logging enabled. Logging to logs/filtered.log");
+                } catch (IOException e) {
+                    logger.error("Failed to initialize filtered log file: " + e.getMessage());
+                }
+            }
             logger.info("Config file loaded successfully!");
             return true;
         } catch (ConfigurateException e) {
@@ -163,5 +176,16 @@ public class ConfigHandler {
             throw new RuntimeException("Missing required chat message in config.yml: ChatMessages." + key);
         }
         return message.replaceAll("&", "§"); // Replace & with § for color codes
+    }
+
+    public boolean isLogFilteredMessagesEnabled() {
+        return logFilteredMessages;
+    }
+
+    public void logFilteredMessage(String message) {
+        if (this.logFilteredMessages && this.filteredLogWriter != null) {
+            this.filteredLogWriter.println(message);
+            this.filteredLogWriter.flush();
+        }
     }
 }
