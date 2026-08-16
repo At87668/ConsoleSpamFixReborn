@@ -72,7 +72,7 @@ public class ForgeCSF {
         // FastStats telemetry (dedicated server only, non-fatal).
         if (ForgeReflection.isDedicatedServer()) {
             try {
-                FastStatsCompat.create(ctx, ForgeReflection.getConfigDir(), "2.0.0",
+                FastStatsCompat.create(ctx, ForgeReflection.getConfigDir(), "2.1.0",
                         new ForgeFastStatsData(), "forge", FastStatsCompat.FASTSTATS_TOKEN)
                         .ready();
             } catch (Throwable t) {
