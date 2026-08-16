@@ -64,4 +64,9 @@ public class BungeeCsfContext implements CsfContext {
     public void reloadConfig() {
         configHandler.loadConfig();
     }
+
+    @Override
+    public void logFilteredMessage(String message) {
+        configHandler.logFilteredMessage(message);
+    }
 }
