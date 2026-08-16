@@ -70,6 +70,7 @@ public class LogFilter implements Filter {
         for (String s : containsFilters) {
             if (message.contains(s)) {
                 engine.addHiddenMsg();
+                ctx.logFilteredMessage(message);
                 return Result.DENY;
             }
         }
@@ -77,6 +78,7 @@ public class LogFilter implements Filter {
         for (Pattern pattern : regexFilters) {
             if (pattern.matcher(message).find()) {
                 engine.addHiddenMsg();
+                ctx.logFilteredMessage(message);
                 return Result.DENY;
             }
         }
