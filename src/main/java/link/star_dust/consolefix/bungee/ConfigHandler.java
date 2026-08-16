@@ -1,5 +1,6 @@
 package link.star_dust.consolefix.bungee;
 
+import link.star_dust.consolefix.core.FilteredLogWriter;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
@@ -13,6 +14,8 @@ import java.util.List;
 public class ConfigHandler {
     private final BungeeCSF plugin;
     private Configuration config;
+    private boolean logFilteredMessages;
+    private FilteredLogWriter filteredLogWriter;
 
     public ConfigHandler(BungeeCSF plugin) {
         this.plugin = plugin;
@@ -38,12 +41,25 @@ public class ConfigHandler {
         try {
             plugin.getLogger().info("Loading the config file...");
             config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configFile);
+            initFilteredLog();
             plugin.getLogger().info("Config file loaded successfully!");
             return true;
         } catch (IOException e) {
             plugin.getLogger().warning("Could not load config file!");
             e.printStackTrace();
             return false;
+        }
+    }
+
+    private void initFilteredLog() {
+        this.logFilteredMessages = this.config.getBoolean("Log-Filtered-Messages", false);
+        if (this.logFilteredMessages && this.filteredLogWriter == null) {
+            try {
+                this.filteredLogWriter = new FilteredLogWriter(new File("logs"));
+                plugin.getLogger().info("Filtered message logging enabled. Logging to logs/yyyy-MM-dd-N-filtered.log");
+            } catch (IOException e) {
+                plugin.getLogger().warning("Failed to initialize filtered log file: " + e.getMessage());
+            }
         }
     }
 
@@ -121,5 +137,15 @@ public class ConfigHandler {
             throw new RuntimeException("Missing required key in config.yml: " + key);
         }
         return config.getString(key);
+    }
+
+    public boolean isLogFilteredMessagesEnabled() {
+        return logFilteredMessages;
+    }
+
+    public void logFilteredMessage(String message) {
+        if (this.logFilteredMessages && this.filteredLogWriter != null) {
+            this.filteredLogWriter.write(message);
+        }
     }
 }
