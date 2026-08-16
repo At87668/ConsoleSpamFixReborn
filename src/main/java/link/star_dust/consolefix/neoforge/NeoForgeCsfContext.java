@@ -2,9 +2,12 @@ package link.star_dust.consolefix.neoforge;
 
 import link.star_dust.consolefix.common.CsfContext;
 import link.star_dust.consolefix.core.ConfigStore;
+import link.star_dust.consolefix.core.FilteredLogWriter;
 
 import org.apache.logging.log4j.LogManager;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -16,10 +19,25 @@ final class NeoForgeCsfContext implements CsfContext {
 
     private final ConfigStore configStore;
     private final org.apache.logging.log4j.Logger logger;
+    private boolean logFilteredMessages;
+    private FilteredLogWriter filteredLogWriter;
 
     NeoForgeCsfContext(ConfigStore configStore) {
         this.configStore = configStore;
         this.logger = LogManager.getLogger("ConsoleSpamFixReborn");
+        initFilteredLog();
+    }
+
+    private void initFilteredLog() {
+        this.logFilteredMessages = configStore.getBoolean("Log-Filtered-Messages", false);
+        if (this.logFilteredMessages && this.filteredLogWriter == null) {
+            try {
+                this.filteredLogWriter = new FilteredLogWriter(new File("logs"));
+                logger.info("Filtered message logging enabled. Logging to logs/yyyy-MM-dd-N-filtered.log");
+            } catch (IOException e) {
+                logger.error("Failed to initialize filtered log file: " + e.getMessage());
+            }
+        }
     }
 
     @Override
@@ -56,5 +74,13 @@ final class NeoForgeCsfContext implements CsfContext {
     @Override
     public void reloadConfig() {
         configStore.reload();
+        initFilteredLog();
+    }
+
+    @Override
+    public void logFilteredMessage(String message) {
+        if (this.logFilteredMessages && this.filteredLogWriter != null) {
+            this.filteredLogWriter.write(message);
+        }
     }
 }
