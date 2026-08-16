@@ -46,4 +46,15 @@ public interface CsfContext {
      * Reload the platform config from disk.
      */
     void reloadConfig();
+
+    /**
+     * Record a message that was hidden by the filter, when the platform has
+     * {@code Log-Filtered-Messages} enabled. No-op by default so platforms
+     * that do not opt in are unaffected.
+     *
+     * @param message the original message that was filtered out
+     */
+    default void logFilteredMessage(String message) {
+        // no-op unless a platform opts in
+    }
 }
