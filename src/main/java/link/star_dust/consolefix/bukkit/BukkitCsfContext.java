@@ -53,4 +53,9 @@ public class BukkitCsfContext implements CsfContext {
     public void reloadConfig() {
         plugin.getConfigHandler().loadConfig();
     }
+
+    @Override
+    public void logFilteredMessage(String message) {
+        plugin.getConfigHandler().logFilteredMessage(message);
+    }
 }
