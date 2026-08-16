@@ -1,5 +1,7 @@
 package link.star_dust.consolefix.bukkit;
 
+import link.star_dust.consolefix.core.FilteredLogWriter;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
@@ -10,6 +12,8 @@ import java.util.List;
  */
 public class ConfigHandler {
     private CSF csf;
+    private boolean logFilteredMessages;
+    private FilteredLogWriter filteredLogWriter;
 
     public ConfigHandler(CSF csf) {
         this.csf = csf;
@@ -35,6 +39,7 @@ public class ConfigHandler {
         try {
             CSF.log.info("Loading the config file...");
             this.csf.getConfig().load(configFile);
+            initFilteredLog();
             CSF.log.info("Config file loaded!");
             return true;
         }
@@ -42,6 +47,18 @@ public class ConfigHandler {
             CSF.log.info("Could not load config file! You need to regenerate the config! Error: " + e.getMessage());
             e.printStackTrace();
             return false;
+        }
+    }
+
+    private void initFilteredLog() {
+        this.logFilteredMessages = this.csf.getConfig().getBoolean("Log-Filtered-Messages", false);
+        if (this.logFilteredMessages && this.filteredLogWriter == null) {
+            try {
+                this.filteredLogWriter = new FilteredLogWriter(new File("logs"));
+                CSF.log.info("Filtered message logging enabled. Logging to logs/yyyy-MM-dd-N-filtered.log");
+            } catch (IOException e) {
+                CSF.log.warning("Failed to initialize filtered log file: " + e.getMessage());
+            }
         }
     }
 
@@ -125,5 +142,15 @@ public class ConfigHandler {
             return "errorCouldNotLocateInConfigYml:" + key;
         }
         return this.csf.getConfig().getString(key).replaceAll("&", "§");
+    }
+
+    public boolean isLogFilteredMessagesEnabled() {
+        return logFilteredMessages;
+    }
+
+    public void logFilteredMessage(String message) {
+        if (this.logFilteredMessages && this.filteredLogWriter != null) {
+            this.filteredLogWriter.write(message);
+        }
     }
 }
