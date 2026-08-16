@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -24,6 +25,7 @@ import java.time.format.DateTimeFormatter;
 public class FilteredLogWriter {
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm:ss");
 
     private final PrintWriter writer;
 
@@ -42,10 +44,12 @@ public class FilteredLogWriter {
     }
 
     /**
-     * Append one filtered message to the current session file.
+     * Append one filtered message to the current session file, prefixed with
+     * the wall-clock time ({@code [HH:mm:ss] }) so entries are easy to scan.
      */
     public synchronized void write(String message) {
-        writer.println(message);
+        String time = LocalTime.now().format(TIME_FORMAT);
+        writer.println("[" + time + "] " + message);
         writer.flush();
     }
 
