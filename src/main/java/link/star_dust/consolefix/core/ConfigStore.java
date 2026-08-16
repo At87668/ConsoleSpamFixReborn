@@ -81,6 +81,18 @@ public class ConfigStore {
     }
 
     /**
+     * Read a boolean, returning the default when the key is missing.
+     */
+    public boolean getBoolean(String path, boolean defaultValue) {
+        if (node == null) return defaultValue;
+        try {
+            return node.node((Object[]) path.split("\\.")).getBoolean(defaultValue);
+        } catch (Exception e) {
+            return defaultValue;
+        }
+    }
+
+    /**
      * Reload the config from disk.
      */
     public void reload() {
