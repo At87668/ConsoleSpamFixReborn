@@ -2,6 +2,7 @@ package link.star_dust.consolefix.velocity;
 
 import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
+import link.star_dust.consolefix.core.FilteredLogWriter;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.loader.ConfigurationLoader;
@@ -20,7 +21,7 @@ public class ConfigHandler {
     private CommentedConfigurationNode configNode;
     private ConfigurationLoader<CommentedConfigurationNode> loader;
     private boolean logFilteredMessages;
-    private PrintWriter filteredLogWriter;
+    private FilteredLogWriter filteredLogWriter;
 
     public ConfigHandler(VelocityCSF velocityCSF) {
         this.logger = velocityCSF.getLogger();
@@ -53,10 +54,8 @@ public class ConfigHandler {
             this.logFilteredMessages = configNode.node("Log-Filtered-Messages").getBoolean(false);
             if (this.logFilteredMessages && this.filteredLogWriter == null) {
                 try {
-                    File logDir = new File("logs");
-                    if (!logDir.exists()) logDir.mkdirs();
-                    this.filteredLogWriter = new PrintWriter(new FileWriter(new File(logDir, "filtered.log"), true));
-                    logger.info("Filtered message logging enabled. Logging to logs/filtered.log");
+                    this.filteredLogWriter = new FilteredLogWriter(new File("logs"));
+                    logger.info("Filtered message logging enabled. Logging to logs/yyyy-MM-dd-N-filtered.log");
                 } catch (IOException e) {
                     logger.error("Failed to initialize filtered log file: " + e.getMessage());
                 }
@@ -184,8 +183,7 @@ public class ConfigHandler {
 
     public void logFilteredMessage(String message) {
         if (this.logFilteredMessages && this.filteredLogWriter != null) {
-            this.filteredLogWriter.println(message);
-            this.filteredLogWriter.flush();
+            this.filteredLogWriter.write(message);
         }
     }
 }
