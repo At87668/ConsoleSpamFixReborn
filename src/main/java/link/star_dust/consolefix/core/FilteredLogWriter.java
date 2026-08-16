@@ -8,54 +8,72 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 /**
- * Persists each filtered (hidden) console message to its own file under the
- * configured directory, named {@code yyyy-MM-dd-N-filtered.log} — e.g.
- * {@code 2026-07-03-1-filtered.log} — where {@code N} is a running sequence
- * number that never collides with an existing file for the same date.
+ * Persists filtered (hidden) console messages to a per-session file under
+ * the configured directory, named {@code yyyy-MM-dd-N-filtered.log} — e.g.
+ * {@code 2026-07-03-1-filtered.log}. All messages hidden during one process
+ * (server run) are appended to the same file; {@code N} is the next free
+ * sequence number for that date, so a restart on the same day opens a fresh
+ * numbered file instead of overwriting the previous session's log.
  *
- * <p>The full original message text is stored verbatim in the file, so no
- * timestamp/sequence prefix is needed inside the content. Shared by every
- * platform; each platform owns its own instance gated by the
- * {@code Log-Filtered-Messages} config option.
+ * <p>The full original message text is stored verbatim, one entry per line,
+ * with no timestamp/sequence prefix inside the file — the date and sequence
+ * already live in the file name. Shared by every platform; each platform
+ * owns its own instance gated by the {@code Log-Filtered-Messages} config
+ * option.
  */
 public class FilteredLogWriter {
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    private final File logDir;
-    private long sequence;
+    private final PrintWriter writer;
 
     /**
-     * Prepare the log directory.
+     * Open (append to) the next available dated, numbered file.
      *
      * @param logDir target directory, e.g. {@code logs}
-     * @throws IOException when the directory cannot be created
+     * @throws IOException when the directory or file cannot be created
      */
     public FilteredLogWriter(File logDir) throws IOException {
-        this.logDir = logDir;
         if (!logDir.exists() && !logDir.mkdirs()) {
             throw new IOException("Could not create log directory: " + logDir);
         }
+        File logFile = nextAvailableFile(logDir, LocalDate.now().format(DATE_FORMAT));
+        this.writer = new PrintWriter(new FileWriter(logFile, true));
     }
 
     /**
-     * Write one filtered message to its own dated, numbered file.
+     * Append one filtered message to the current session file.
      */
     public synchronized void write(String message) {
-        String date = LocalDate.now().format(DATE_FORMAT);
-        File file = nextAvailableFile(date);
-        try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
-            writer.println(message);
-        } catch (IOException e) {
-            // best-effort audit log: a failed write must never break filtering
-        }
+        writer.println(message);
+        writer.flush();
     }
 
-    private File nextAvailableFile(String date) {
-        File file;
-        do {
-            file = new File(logDir, date + "-" + (++sequence) + "-filtered.log");
-        } while (file.exists());
-        return file;
+    /**
+     * Close the underlying writer.
+     */
+    public synchronized void close() {
+        writer.close();
+    }
+
+    private static File nextAvailableFile(File logDir, String date) {
+        int max = 0;
+        File[] files = logDir.listFiles((dir, name) -> name.startsWith(date + "-") && name.endsWith("-filtered.log"));
+        if (files != null) {
+            for (File file : files) {
+                int value = parseSequence(file.getName(), date);
+                if (value > max) max = value;
+            }
+        }
+        return new File(logDir, date + "-" + (max + 1) + "-filtered.log");
+    }
+
+    private static int parseSequence(String name, String date) {
+        try {
+            String middle = name.substring(date.length() + 1, name.length() - "-filtered.log".length());
+            return Integer.parseInt(middle);
+        } catch (Exception e) {
+            return 0;
+        }
     }
 }
