@@ -21,5 +21,9 @@ Messages-To-Hide-Filter:
     - '^Third example message$'
     - '^\[.*\] Fourth example message$'
 
+#Write each hidden (filtered) message to its own file under logs/.
+#File names follow the pattern yyyy-MM-dd-N-filtered.log (e.g. 2026-07-03-1-filtered.log)
+Log-Filtered-Messages: false
+
 # !NOTE: DONT CHANGE CONFIG VERSION!
 _config-version: 2
